@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>ASCO 2026 My Agenda</title>
+<style>
+/* ── System font stack — no external network needed ── */
+:root{
+  --ff: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  --bg:#0A1520; --sf:#111E2E; --sf2:#172030;
+  --teal:#00B4A0; --td:#007A6E; --gold:#E8A020;
+  --coral:#E05050; --lav:#7B8FD4; --grn:#3DB88A;
+  --amb:#F0A030; --pink:#D06090;
+  --border:rgba(255,255,255,.08);
+  --text:#E8EDF4; --mut:#8099B8; --r:12px; --navy:#0D1B2A;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{background:var(--bg);color:var(--text);font-family:var(--ff);}
+body{padding-bottom:100px;}
+
+/* header */
+.hdr{background:linear-gradient(150deg,#0D2040,#0A1520);padding:52px 18px 14px;
+  position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
+.hdr-r{display:flex;justify-content:space-between;align-items:flex-start;}
+.hdr h1{font-size:21px;font-weight:700;line-height:1.2;color:#fff;}
+.hdr h1 em{color:var(--teal);font-style:normal;}
+.hdr-sub{font-size:11px;color:var(--mut);margin-top:4px;}
+.cbadge{background:var(--teal);color:#fff;font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:20px;}
+
+/* day tabs */
+.tabs{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;
+  background:var(--sf);border-bottom:1px solid var(--border);
+  position:sticky;top:88px;z-index:90;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:8px 14px;border-radius:20px;
+  border:1px solid var(--border);background:transparent;
+  font-size:13px;font-weight:600;color:var(--mut);cursor:pointer;
+  white-space:nowrap;font-family:var(--mono);-webkit-appearance:none;
+  transition:all .2s;min-height:44px;}
+.tab.on{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+/* type filters */
+.frow{display:flex;gap:6px;padding:8px 16px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none;background:var(--bg);}
+.frow::-webkit-scrollbar{display:none;}
+.fc{flex-shrink:0;padding:8px 14px;border-radius:20px;font-size:12px;
+  font-weight:600;cursor:pointer;border:1.5px solid transparent;
+  -webkit-appearance:none;min-height:44px;transition:opacity .2s;}
+.fc.dim{opacity:.3;}
+.fc-all{background:#fff;color:var(--navy);}
+.fc-sess{background:rgba(0,180,160,.18);color:var(--teal);border-color:var(--td);}
+.fc-poster{background:rgba(232,160,32,.15);color:var(--gold);border-color:#C47A10;}
+.fc-meet{background:rgba(208,96,144,.18);color:var(--pink);border-color:#A04070;}
+
+.cbar{font-size:11px;color:var(--mut);padding:3px 18px;font-family:var(--mono);}
+
+/* content */
+.content{padding:10px 16px;display:flex;flex-direction:column;gap:10px;}
+.dlbl{display:flex;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:11px;color:var(--mut);letter-spacing:1px;text-transform:uppercase;
+  padding:6px 0 2px;}
+.dlbl::after{content:"";flex:1;height:1px;background:var(--border);}
+
+/* session card */
+.card{background:var(--sf);border-radius:var(--r);
+  border:1px solid var(--border);overflow:hidden;}
+.stripe{height:3px;}
+.cbody{padding:12px 14px 14px;}
+.ctop{display:flex;justify-content:space-between;align-items:flex-start;
+  margin-bottom:8px;}
+.cmeta{display:flex;flex-direction:column;gap:4px;}
+.ttag{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--teal);
+  background:rgba(0,180,160,.1);padding:2px 8px;border-radius:4px;
+  display:inline-block;}
+.vtag{font-size:11px;color:var(--mut);display:flex;align-items:center;gap:4px;}
+.vdot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.prio{font-size:14px;flex-shrink:0;}
+.pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;
+  border-radius:3px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px;}
+.tja{font-size:15px;font-weight:700;line-height:1.5;color:#fff;margin-bottom:3px;}
+.ten{font-size:11px;color:var(--mut);line-height:1.4;margin-bottom:5px;}
+.auth{font-size:11px;color:var(--teal);margin-bottom:5px;}
+.ktags{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0;}
+.ktag{font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px;
+  background:rgba(123,143,212,.15);color:var(--lav);
+  border:1px solid rgba(123,143,212,.2);}
+.cnote{font-size:11px;color:var(--amb);background:rgba(240,160,48,.1);
+  border-left:2px solid var(--amb);padding:5px 9px;
+  border-radius:0 4px 4px 0;margin-top:7px;line-height:1.5;}
+.cwarn{font-size:11px;color:var(--coral);background:rgba(224,80,80,.1);
+  border-left:2px solid var(--coral);padding:5px 9px;
+  border-radius:0 4px 4px 0;margin-top:5px;line-height:1.5;}
+.sy{color:var(--teal);font-size:10px;font-weight:600;}
+.sn{color:var(--coral);font-size:10px;}
+
+/* abstract toggle — using <button> for iOS tap reliability */
+.abs-toggle{display:flex;align-items:center;gap:6px;margin-top:8px;
+  padding:10px 12px;background:var(--sf2);border-radius:8px;
+  cursor:pointer;border:1px solid var(--border);width:100%;text-align:left;
+  -webkit-appearance:none;min-height:44px;}
+.abs-toggle-label{font-size:12px;font-weight:600;color:var(--teal);}
+.abs-toggle-hint{font-size:10px;color:var(--mut);margin-left:4px;}
+.abs-arr{font-size:12px;color:var(--mut);margin-left:auto;
+  transition:transform .25s;display:inline-block;}
+.abs-toggle.open .abs-arr{transform:rotate(180deg);}
+.abs-body{display:none;margin-top:6px;padding:10px 12px;
+  background:var(--sf2);border-radius:8px;border:1px solid var(--border);}
+.abs-body.open{display:block;}
+.abs-sec-title{font-size:10px;font-weight:700;color:var(--gold);
+  letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;margin-top:8px;}
+.abs-sec-title:first-child{margin-top:0;}
+.abs-sec-text{font-size:13px;line-height:1.7;color:var(--text);}
+
+/* sub-abstract inside session */
+.subabs{background:var(--sf2);border-radius:8px;padding:9px 11px;
+  margin-top:7px;border:1px solid var(--border);}
+.sa-num{font-family:var(--mono);font-size:10px;color:var(--gold);margin-bottom:3px;}
+.sa-ja{font-size:13px;font-weight:600;color:#fff;line-height:1.4;margin-bottom:2px;}
+.sa-en{font-size:11px;color:var(--mut);line-height:1.4;margin-bottom:3px;}
+.sa-auth{font-size:11px;color:var(--teal);margin-bottom:4px;}
+/* sub-abstract toggle — also <button> */
+.sa-toggle-btn{font-size:11px;color:var(--teal);
+  background:transparent;border:none;cursor:pointer;
+  padding:4px 0;-webkit-appearance:none;min-height:36px;
+  text-align:left;display:block;}
+.sa-body{display:none;margin-top:6px;padding:8px 10px;
+  background:var(--bg);border-radius:6px;border:1px solid var(--border);}
+.sa-body.open{display:block;}
+.sa-body-text{font-size:12px;line-height:1.7;color:var(--text);}
+
+/* poster card */
+.pcard{background:var(--sf2);border-radius:var(--r);
+  border:1px solid var(--border);overflow:hidden;}
+.pcbody{padding:12px 14px;}
+.pnum{font-family:var(--mono);font-size:11px;color:var(--gold);
+  background:rgba(232,160,32,.1);border:1px solid rgba(232,160,32,.2);
+  padding:1px 7px;border-radius:3px;display:inline-block;margin-bottom:5px;}
+.ptja{font-size:14px;font-weight:700;line-height:1.5;
+  color:#fff;margin-bottom:3px;}
+.pten{font-size:11px;color:var(--mut);line-height:1.4;margin-bottom:4px;}
+.pauth{font-size:11px;color:var(--teal);margin-bottom:4px;}
+
+/* meeting card */
+.mcard{background:var(--sf);border-radius:var(--r);
+  border:1px solid rgba(208,96,144,.35);overflow:hidden;}
+.mcard-top{height:4px;
+  background:linear-gradient(90deg,var(--pink),#8040A0);}
+.mcard-body{padding:12px 14px 14px;}
+.mcard-badge{display:inline-flex;align-items:center;gap:4px;
+  background:rgba(208,96,144,.15);color:var(--pink);
+  font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;
+  margin-bottom:8px;}
+.mcard-time{font-family:var(--mono);font-size:12px;font-weight:500;
+  color:var(--pink);background:rgba(208,96,144,.12);
+  padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:4px;}
+.mcard-venue{font-size:11px;color:var(--mut);margin-bottom:8px;line-height:1.5;}
+.mcard-org{font-size:16px;font-weight:700;color:#fff;
+  line-height:1.3;margin-bottom:4px;}
+.mcard-dis{display:inline-block;font-size:10px;font-weight:700;
+  padding:1px 7px;border-radius:10px;background:rgba(208,96,144,.15);
+  color:var(--pink);border:1px solid rgba(208,96,144,.25);
+  margin-bottom:5px;}
+.mcard-lead{font-size:11px;color:var(--teal);margin-bottom:6px;}
+.mcard-desc{font-size:13px;color:var(--text);line-height:1.7;margin-bottom:6px;}
+.mcard-url{font-size:11px;color:var(--teal);
+  word-break:break-all;display:block;margin-top:4px;}
+
+/* bottom nav */
+.bnav{position:fixed;bottom:0;left:0;right:0;
+  background:rgba(13,27,42,.96);-webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);border-top:1px solid var(--border);
+  padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px));
+  display:flex;justify-content:space-around;z-index:200;}
+.nbtn{display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:10px;font-weight:500;color:var(--mut);
+  padding:4px 14px;border:none;background:transparent;cursor:pointer;
+  font-family:var(--ff);-webkit-appearance:none;min-height:44px;}
+.nbtn.on{color:var(--teal);}
+.nbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;
+  stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.empty{text-align:center;padding:60px 20px;color:var(--mut);font-size:14px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-r">
+    <div>
+      <h1>ASCO <em>2026</em> My Agenda</h1>
+      <div style="font-size:12px;color:var(--teal);margin-top:2px;font-weight:600;">
+        ver.4 — 抄録要約 + 面会予定</div>
+      <div class="hdr-sub">抄録全文（874p）より抽出・日本語要約 | 面会予定含む | All times CDT</div>
+    </div>
+    <div class="cbadge" id="cbadge">—</div>
+  </div>
+</div>
+
+<div class="tabs" id="dayTabs">
+  <button class="tab on" data-day="all">全日程</button>
+  <button class="tab" data-day="1">5/29 金</button>
+  <button class="tab" data-day="2">5/30 土</button>
+  <button class="tab" data-day="3">5/31 日</button>
+  <button class="tab" data-day="4">6/1 月</button>
+</div>
+
+<div class="frow" id="frow">
+  <button class="fc fc-all"    data-t="all">すべて</button>
+  <button class="fc fc-sess"   data-t="session">セッション</button>
+  <button class="fc fc-poster" data-t="poster">ポスター</button>
+  <button class="fc fc-meet"   data-t="meeting">👥 面会</button>
+</div>
+
+<div class="cbar" id="cbar"></div>
+<div class="content" id="content"></div>
+<div class="empty"   id="empty" style="display:none">該当なし</div>
+
+<div class="bnav">
+  <button class="nbtn on" id="btnTop">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+      <polyline points="9,22 9,12 15,12 15,22"/></svg>トップ
+  </button>
+  <button class="nbtn" id="btnStar">
+    <svg viewBox="0 0 24 24">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>★★★のみ
+  </button>
+  <button class="nbtn" id="btnReset">
+    <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 109 9"/>
+      <polyline points="3,7 3,12 8,12"/></svg>リセット
+  </button>
+</div>
+
+<script>
+"use strict";
+var SUMS = {
+  "103":{bg:"FMISO PET（機能的低酸素イメージング）で選択したHPV関連中咽頭がん患者に、大幅な放射線量減量を行った場合の長期アウトカムを報告。3つの連続した第II相試験の統合分析（10施設）。T0–3/N1–2c HPV+中咽頭がん患者を対象に、低酸素画像が良好な患者には大幅減量、不良な患者には標準線量を投与。",meth:"機能的低酸素イメージング（FMISO PET）でスクリーニング → 良好群：大幅線量減量 → 不良群：標準線量。主要評価項目：局所コントロール率、毒性、QOL。",pnt:"患者のQOL改善と晩期毒性軽減を目標とした「患者中心」の治療減量研究。エンドポイントの設計がpatient-centeredの典型例。"},
+  "104":{bg:"悪性腹水（MA）は進行がん（胃・大腸・卵巣）の重篤な合併症で、症状負担が大きく、全身療法の有効性を低下させ、QOLを著しく損なう。標準治療の腹腔穿刺は一時的な症状緩和のみ。M701（EpCAM×CD3二重特異性抗体）の腹腔内投与と腹腔穿刺を比較するPhase 3 RCT。",meth:"標準療法失敗後の進行胃がん・大腸がん・卵巣がんのMA患者をランダム化。主要評価項目：腹水コントロール率、症状スコア、QOL（EORTC QLQ-C30）、OS。",pnt:"症状負担・QOL・患者体験を主要評価項目とするPhase 3試験。このCSSで取り上げられる理由はpatient-centered endpointsの選択法の具体例として。"},
+  "105":{bg:"ESOPEC試験では周術期化学療法（FLOT）が術前化学放射線療法（CROSS）より切除可能食道腺がんの生存を改善することが既に示された。この発表はPROを副次的評価項目として報告。PRO測定：EORTC QLQ-C30（全般的健康状態）、OES18（食道特異的）、CIPN20（末梢神経障害）をベースライン・治療中・フォローアップ時に測定。",meth:"cT1 cN+ cM0またはcT2-4a cNany cM0食道腺がん患者をFLOT vs CROSSにランダム化。PRO：ベースライン→治療中→術後→定期フォローアップにわたる全般的健康状態の変化を解析。",pnt:"Phase 3 RCTのPRO副次評価項目の発表。抄録内のCSS「患者の声を高める」セッションで直接議論される演題。治療選択と患者QOLのバランスをどう測定するかの実例。"},
+  "1501":{bg:"がん臨床試験への登録不足は研究進歩の大きな障壁。少数の患者のみが試験を提案され、事前スクリーニングは手作業で労力がかかる。AI（TRIAGE：Trial Recommendations using Intelligent Assessment to Guide Eligibility and Enrollment）を用いた中央集中型患者スクリーニングシステムの専門家による検証。",meth:"大規模コミュニティ・学術混合がんセンターで後向き研究。629患者・4,094患者-試験ペアをトレーニングデータとして使用。AIシステムのパフォーマンスをCRC専門家の判定（ゴールドスタンダード）と比較。LLMのみのソリューションも比較対象。",pnt:"CRC判定をゴールドスタンダードとして、AIシステムを検証。CRCの役割とAIの関係を示す重要演題。"},
+  "1516":{bg:"IMGは米国血液腫瘍学・内科腫瘍学の人材の38%を占める（AAMC調査）。農村部・医療専門家不足地域（HPSA）での腫瘍医の地理的分布とIMGステータスの関連を解析。",meth:"Medicare Care Compareで血液腫瘍学・内科腫瘍学専門医を特定。IMG定義：米国・プエルトリコ・カナダ以外の医学部卒業。51%はCare Compareから、43%はAMA Masterfleから、6%欠損分はGeminiで補完。農村郡・HPSA郡でのIMGステータスをクロス集計。",pnt:"地理的格差解消におけるIMGの役割を定量化。workforce diversityとアクセス格差の関係。"},
+  "1520":{bg:"乳がん治療のfinancial toxicity（FT）は心理的ウェルビーイング・治療アドヒアランス・QOLに悪影響を及ぼす。財政ナビゲーション（FN）は有効な戦略として提案されているが、高品質RCT証拠は限られていた。",meth:"二重盲検評価者盲検・並行群間RCT。アジュバント療法中の成人女性乳がん患者（n=82、41人/群）。介入：個別ニーズ評価・費用関連情報提供・保険/補助金ナビゲーション・地域リソース紹介。主要評価項目：3か月時点のFT（COSTスコア）。",pnt:"財政ナビゲーション介入の高品質RCTエビデンス。中国からのデータで国際的視点。"},
+  "1521":{bg:"ACPはすべてのがん患者に推奨されているが、臨床医の時間不足・報酬不十分・workforce不足などの多層的障壁により参加率が低い。CHW主導のグループ型ACPアプローチが個別介入と比較してスケール可能か。",meth:"前向きRCT：1か月のCHW主導グループACP教育介入+通常ケアvs通常ケアのみを比較。アウトカム：ACP文書化率・患者/家族満足度・緩和ケア紹介・ホスピス入院。",pnt:"人手不足の中でACP教育をスケールする実践的手法。workforce shortage対策としての集団介入モデル。"},
+  "1536":{bg:"建築環境とがんアウトカムの関連が増加するエビデンスがある。NCCNはがんケアにおける交通アクセスの重要性を強調。がん患者、特に高齢者は、頻繁な医療受診と治療関連のFTにより、交通アクセス不足に脆弱。",meth:"NIH All of Usコホートの成人がん患者31,126人のデータを分析（歴史的に研究で過少代表されてきた集団を含む）。公共交通機関からの距離と自己申告のQOL・疼痛・倦怠感の関連を多変量順序ロジスティック回帰で解析。",pnt:"交通アクセスがFTとQOLの構造的決定因子であることを大規模データで示す。社会的決定因子研究。"},
+  "1537":{bg:"がんケアへの長い移動時間が悪い予後とQOLに関連することが知られている。移動時間とケアアクセス・交通苦痛・financial toxicityの関連を検討。",meth:"Cancer Experience Registry（CER）参加者（2021年10月–2025年12月）が、社会人口統計・臨床情報・financial toxicity（FACIT-COST 11項目）・がんケアへの移動時間（分/時間）・交通苦痛（1–5スケール）・ケアアクセスの遅延/障壁（yes/no）を自己申告。",pnt:"Time toxicity × financial toxicityの交差を実測した唯一レベルの研究。Cancer Support Communityの大規模レジストリデータ使用。"},
+  "1581":{bg:"閉経前乳がん患者では、長期の内分泌療法（leuprolide・denosumab）が繰り返しの外来注射を必要とし、大きな時間負担とアドヒアランス課題を生む。遠隔医療支援の在宅注射プログラムの実現可能性を評価。",meth:"4つの外来腫瘍学診療所（2024年10月–2025年1月）から患者を募集。遠隔医療受診での評価後、在宅看護師注射訪問を実施。実現可能性・患者体験・満足度・アドヒアランスを評価。",pnt:"外来注射のTime toxicity軽減。患者体験改善と治療アドヒアランス向上の両立を目指したケアデリバリー革新。"},
+  "1585":{bg:"早期がん試験は医学的に複雑な患者と狭い登録ウィンドウを含む。従来のCRC役割はデータ管理とスケジューリングに限定され、患者対面ワークフローへの統合が限られ、プロトコル実施とプレスクリーニングにギャップが生じていた。",meth:"バイオマーカー主導の第I相試験でCRCを患者対面ワークフローに組み込むパイロット。CRCが研究者・研究看護師と患者受診に同席。実施内容：標準化された患者スケジュール教育・CRC主導の週次計画・リアルタイムプロトコルサポート・前向きスクリーニングサポート。評価：プロトコル逸脱率・登録効率・患者満足度・多職種連携指標。",pnt:"CRC主導ケアデリバリーモデルの実践パイロット。CRCの役割拡大・患者中心の試験実施強化の直接的エビデンス。"},
+  "1592":{bg:"がん負担の測定は生存研究・医療システム設計・政策に情報を提供する。既存アプローチは構造化PROMs依存でコスト高・文化的制約・グローバルスケール困難。AIのLLMsが非構造化患者ナラティブを大規模に分析する機会を提供。",meth:"成人がん患者・サバイバーが構造化負担評価（Likert）AND自由記述ナラティブを提供。LLM主導フレームワークが自由記述から多次元がん負担を評価し、構造化評価と照合検証。複数国・複数施設でのグローバル協調。",pnt:"構造化PROMs以外で患者の声を捉える革新的アプローチ。AIを用いた患者体験のグローバル測定。Lancet委員会との連携。"},
+  "9004":{bg:"グローバル腫瘍科workforce計画は予測モデルに依存するが、ベースライン階層化に高度に敏感。歴史的モデルは広い地理的地域を使用し、地域内の経済的不均質性を隠す。",meth:"査読文献・政府/省庁報告・ESMO・ASCOデータセットから腫瘍科workforce データを抽出。がん罹患率・人口予測はGLOBOCANとUN。Workforce負担 = がん症例数当たりの腫瘍医数。地域別vs所得階層化予測モデルを比較。",pnt:"2050年の腫瘍科人材不足を定量化。グローバルworkforce crisisの数値的予測。"},
+  "9009":{bg:"米国腫瘍医のバーンアウトは2013年の34%から2023年の59%に上昇、グローバル推計32–45%。過去10年で米国腫瘍医の約20%が臨床業務を離脱。バーンアウトは充実度・離職意向と切り離して研究されてきた。",meth:"匿名横断的グローバル調査（2025年10月–12月）。バーンアウト評価：Maslach Burnout Inventory（MBI）検証済み項目。職業的充実感・キャリアへの後悔・臨床業務離職意向との関連を評価。",pnt:"腫瘍医のバーンアウト・充実度・離職意向のグローバルデータ。Workforce crisis定量化の重要エビデンス。"},
+  "9041":{bg:"APP（ナースプラクティショナー・フィジシャンアシスタント）は腫瘍チームの重要メンバーだが、臨床試験への活用は歴史的に限定的。NCI政策変更（2020–2021）でAPP役割拡大が可能に。UH Cancer Center/Hawaii NCORPでのAPP正式活用の影響を測定。",meth:"臨床試験管理システムから年次APPデータを収集（2021–2025年）。測定指標：APPが署名した試験プロトコルコンセント・実施した研究受診・安全性報告・規制提出。促進要因と障壁を特定。",pnt:"5年間の実世界データ。APPがCRCと補完的に機能するNCORP内の試験実施モデル。Workforce拡大の実証。"},
+  "11004":{bg:"ePROモニタリングが進行がん患者のQOLと生存を改善することが先行RCTで示唆されているが、西洋医療以外での証拠は限られている。日本人患者でのePROの有用性（OS・HR-QOL）を評価する多施設RCT（PRO-MOTE）。",meth:"18歳以上・ECOG PS 0–2・全身療法中の進行固形腫瘍患者をePROモニタリング群vs通常ケア群に1:1ランダム化。治療期間中に毎週ePRO症状調査（閾値超過で医療チームにアラート）。主要評価項目：OS・HR-QOL（FACT-G、FACT-T）。",pnt:"日本からの多施設RCT。非西洋設定でのePRO有効性を検証。国際的なPRO研究への貢献。"},
+  "11005":{bg:"ePROベースのRTM（リモート治療モニタリング）がケアチームの早期対応と急性期ケアイベント回避を可能にするがリアルワールド証拠は限られている。Canopy ePROプラットフォームのRTMが急性期ケアに与える影響を評価。",meth:"5つの地域腫瘍学施設で転移性固形腫瘍患者1,549人を研究（2024年1月–2025年7月）。週次ePRO症状調査・閾値超過で専任トリアージ看護師に通知・電話/緊急外来/ER紹介を検討。RTM群（45日以内に2回以上ePRO提出）vs非RTM群で急性期ケアイベントを比較。",pnt:"地域腫瘍学実臨床でのePRO RTMの効果。急性期ケア削減・コスト削減のリアルワールドエビデンス。"},
+  "11008":{bg:"若年発症大腸がん（50歳未満）の増加。患者は特有の課題に直面（仕事・育児・経済的問題など）。専任ケアコーディネーターが多次元的支援サービスへのアクセスを改善できるか。",meth:"50歳未満の新規診断CRC患者（2023–2025）に、通常の多職種ケアvs通常ケア+ケアコーディネーター面談（YOCRCプログラム）を割り当て。初回受診時に患者報告の懸念と苦痛を収集。主要評価項目：支援サービス（心理・社会・栄養・遺伝・生殖・経済・その他）の利用率。",pnt:"がん特有の課題に対するcare coordinationの実用的試験。Patient centricityとspecialized supportの実践例。"},
+  "11025":{bg:"HR+乳がんのAET（アジュバント内分泌療法）はアドヒアランス不良が多い。手動スクリーニングは煩雑。EHR構造化データを用いたインフォマティクス支援スクリーニングがコーディネーター時間を削減できるかを検討。",meth:"Mayo Clinicでの2段階アプローチを分析：(1) EHR構造化データ（診断日・病期・ER/PR/HER2陽性・薬剤処方）での自動プレスクリーニング、(2) 詳細チャートレビュー。各ステップでのコーディネーター時間と精度を計測。複数施設での変動を評価。",pnt:"CRC・コーディネーター業務効率化の直接的エビデンス。インフォマティクスで試験負担を軽減する実践的アプローチ。"},
+  "11049":{bg:"財政的困窮はがん患者の転帰悪化と関連。CREDIT（SWOG S1912CD）は財政ナビゲーション介入vs通常ケアを評価する全国前向きRCT。試験登録者のベースライン財務特性を報告。",meth:"転移性/ステージIV固形腫瘍または血液悪性腫瘍診断から6か月以内。329人をランダム化（2021年7月–2024年12月）。自己申告データ（教育・就業・収入・保険）と信用データを組み合わせてFTのベースライン状況を評価。",pnt:"Financial toxicityの実態とRCT介入試験のベースラインデータ。SWOG大規模試験からのリアルワールド財務状況。"},
+  "11057":{bg:"がんケアは時間集約的だが、特定タスクの時間負担が患者苦痛に与える影響は不明。がんケア関連の具体的タスクに費やす時間と患者苦痛の関連を評価し、最脆弱集団を特定する。",meth:"ミネソタ大学・アラバマ大学バーミンガム校で進行卵巣がん・転移性乳がん治療中の患者を登録。28日間、モバイルアプリで「外出」と「在宅」のがんケア関連タスク時間を記録。毎日の苦痛をNCCN苦痛温度計（0–10）で測定。主要評価項目：がんケア時間と苦痛の関連。",pnt:"Time toxicityの初の体系的実測研究。タスク別の時間記録とウェルビーイングの関連を直接評価。モバイルアプリを用いた実測データ。"},
+  "11061":{bg:"腫瘍研究での構造的患者パートナーシップの重要性は認められているが、がん試験グループとがんチャリティが連携してシステムワイドに患者パートナーシップを持続する方法は不明。",meth:"CTI（Cancer Trials Ireland）のPatient Consultants Committee（2016年発足）の開発・実施を回顧的にレビュー。アイルランドがん学会（ICS）の役割（資金・戦略的整合・パブリックエンゲージメント）を検討。組織的な学習・障壁・成功要因を分析。",pnt:"全国的な患者パートナーシップモデルの10年近くの実装経験。Cancer Trials IrelandとICS（患者アドボカシー団体）の協働モデル。"},
+  "11092":{bg:"がん臨床試験の登録不足は長年の課題。従来の対策は患者の知識・態度・信念・財政的/実際的障壁・不信感に焦点。教育介入で試験へのアクセスを民主化し登録を改善できるか。",meth:"3施設のがんセンターで乳がん・肝がん・肺がん患者の治療決定時点に、コンセント後に臨床試験全般について教育し、試験マッチリストを腫瘍医・患者に提供。時系列介入（INT）として実施。教育前後での登録率・患者の試験理解を比較。",pnt:"患者が試験に参加しない理由の実態とCRCによる教育介入の効果。Patient preference・patient education・trial participation障壁の解決策。"},
+  "11112":{bg:"PROgress Trackerは倫理承認済みの非介入PROレジストリで、患者アドボカシー団体Breast Cancer Canada主導のピアツーピアモデル。初期結果として年齢・病期・分子サブタイプ別の疾患不安の性質と強度を報告。",meth:"2023年開始、10年間でカナダのステージ0–IV乳がん患者をエンロール。参加者は自己紹介入し、検証済みPROMs（人口統計・社会経済・臨床・全体的ウェルビーイング）をデジタルプラットフォームで四半期ごとに記録。AIを用いたリアルワールド分析（2026年1月）。",pnt:"患者アドボカシー団体主導のPROレジストリ。患者が中心となったデータ収集・研究の実践モデル。"},
+  "12032":{bg:"緩和ケアはEOLアウトカムを改善するが（在宅死亡率向上など）、アクセスは緩和ケア医師の地理的分布格差により不公平。郡レベル緩和ケア医師密度とがん死亡場所の関連を検討。",meth:"CDC WONDER多死因データ（2021–2023）とAMA Physician Masterfile緩和ケア医師供給データを連結。主要曝露：郡レベル緩和ケア医師密度（10万人当たり）。主要評価項目：がん死亡場所（病院vs在宅/ホスピスなど）。社会経済的決定因子（貧困・保険・人種）も調整。",pnt:"Palliative care workforce格差と患者preference（死亡場所選好）の関連を全国データで示す。緩和ケア医師のworkforce分配問題の定量化。"},
+  "12073":{bg:"2016年ASCOガイドラインは進行がん患者への診断から8週以内の専任緩和ケアを推奨。それにもかかわらず、様々な人口統計グループにわたる格差が持続している。",meth:"2016–2022年全国入院サンプル（NIS）からの成人がん入院を分析。緩和ケア（PalC）をICD-10コードで同定。人種/民族・保険種別・所得・病院特性別にPalCの利用パターンと7年間の経時的傾向を分析。",pnt:"緩和ケアへのアクセスにおける人種・保険・所得格差の全国規模での経時的変化。ASCOガイドライン推奨後も格差が持続しているかを検証。"}
+};
+
+var MEETINGS = [
+  {day:1, time:"9:00 AM CT", venue:"ASCO Patient Advocacy Summit会場",
+   org:"DS ASCO Patient Advocacy Summit（参加）",
+   disease:"—", lead:"Christeen",
+   desc:"ASCO Patient Advocacy Summitへの参加。DSチームとして患者アドボカシーコミュニティとの関係構築。",
+   url:""},
+  {day:1, time:"1:00 PM – 2:00 PM", venue:"MR 1209 | Hall E (Level 2) | McCormick Place Lakeside Center/East Building",
+   org:"Gunnarと面会",
+   disease:"—", lead:"Gunnar",
+   desc:"",
+   url:""},
+  {day:2, time:"10:30 AM CT", venue:"N129 | Level 1 | McCormick Place North Building",
+   org:"Patvocates",
+   disease:"—", lead:"Hamda",
+   desc:"2010年設立の患者主導型ソーシャルコンサルタンシー＆シンクタンク（ドイツ拠点）。患者エンゲージメント戦略策定、患者団体の能力強化、製薬企業・学会向け患者関与フレームワーク導入支援。WECAN等国際プロジェクトにも参画。",
+   url:"https://www.patvocates.net/"},
+  {day:2, time:"11:30 AM – 12:00 PM CDT", venue:"N129 | Level 1 | McCormick Place North Building",
+   org:"WECAN – Workgroup of European Cancer Patient Advocacy Networks",
+   disease:"—", lead:"Hamda",
+   desc:"2015年設立、2025年にオランダ法人化。23の汎欧州がん患者傘下団体が参加。CANCERSurvey（患者体験データ国際比較調査）、EuroACT（欧州臨床試験アトラス）、WECAN Academy（患者アドボケート教育）等を推進。",
+   url:"https://wecanadvocate.eu/"},
+  {day:2, time:"2:00 PM – 2:45 PM", venue:"MR 1110 | Hall E (Level 2) | McCormick Place Lakeside Center/East Building",
+   org:"Worth the Wait",
+   disease:"General（AYA）", lead:"Clarissa",
+   desc:"13〜39歳のAYA世代がんサバイバーの妊孕性保存・家族形成（IVF、養子縁組、代理出産）を経済的支援する非営利団体（2021年設立）。緊急妊孕性保存グラントおよび治療後家族形成グラントを提供。",
+   url:"https://worththewaitcharity.com/"},
+  {day:2, time:"3:00 PM – 3:45 PM", venue:"Daiichi Sankyo Booth #15013 | Innovation Room | McCormick Place South Building/Exhibit Hall",
+   org:"TNBC Foundation",
+   disease:"Breast（Triple Negative）", lead:"Clarissa",
+   desc:"トリプルネガティブ乳がん（TNBC）に特化した情報提供・患者支援団体。CancerCareと提携した専門Helpline（877-880-8622）、オンラインフォーラム「TNBC Talk」、転移性TNBC向け「Metastatic Mondays」を運営。",
+   url:"https://tnbcfoundation.org/"},
+  {day:3, time:"9:30 AM CT", venue:"N129 | Level 1 | McCormick Place North Building",
+   org:"UICC – Union for International Cancer Control",
+   disease:"—", lead:"Gunnar",
+   desc:"1933年設立、ジュネーブ本部の世界最大・最古のがん制圧国際NGO。170カ国超・1,100超会員組織。World Cancer Day、World Cancer Congress主催。WHOと公式関係を持ち各国がん対策計画策定を支援。",
+   url:"https://www.uicc.org/"},
+];
+
+var DATA = {
+  session: [
+    {day:1,t:"1:00–2:30 PM",v:"S100a",st:1,p:"★★★",c:"#00B4A0",
+     pill:"Special Session",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
+     tja:"ASCO Voices",ten:"Special Session: ASCO Voices",
+     auth:"複数の患者・臨床家によるライトニングトーク",
+     tags:["Patient Experience","Patient Advocacy","文化・代表性"],
+     note:"患者体験・文化・代表性・advocacyの核心。患者スピーカーも登壇。",warn:""},
+    {day:1,t:"1:00–2:30 PM",v:"E450b",st:0,p:"★★",c:"#E05050",
+     pill:"Education Session",pb:"rgba(224,80,80,.15)",pc:"#E05050",
+     tja:"危機・移民・避難民集団におけるがんケア",ten:"Cancer Care in Times of Crisis and in Immigrant and Displaced Populations",
+     auth:"",tags:["文化","地域格差","Vulnerable Population"],note:"",warn:"ASCO Voicesと同時刻 — どちらか選択"},
+    {day:1,t:"3:00–6:00 PM（2回開催）",v:"S501abc",st:0,p:"★★",c:"#7B8FD4",
+     pill:"Workshop（定員制）",pb:"rgba(123,143,212,.15)",pc:"#7B8FD4",
+     tja:"末期がんにおけるコミュニケーション：予後の共有と患者ゴールへのケア調整",
+     ten:"Communication in Late-Stage Cancer: Discussing Prognosis and Matching Care to Patients' Goals",
+     auth:"",tags:["Patient Interview","Patient Preference","Goals of Care"],
+     note:"3:00 PM & 4:30 PM の2回開催。定員制・先着順。",warn:""},
+    {day:1,t:"3:00–6:00 PM",v:"E350",st:1,p:"★★★",c:"#E05050",
+     pill:"Oral Abstract Session",pb:"rgba(224,80,80,.15)",pc:"#E05050",
+     tja:"口頭発表：ケアデリバリー・ケアモデル",
+     ten:"Oral Abstract Session: Care Delivery / Models of Care",
+     auth:"",tags:["Financial Toxicity","Time Toxicity","地域格差","CRC"],
+     note:"",warn:"",
+     subs:[
+       {n:"Abstract 1501",tja:"AIによる治験マッチングのCRC専門家検証（TRIAGE）",ten:"Expert validation of AI-enabled trial matching — CRC adjudication study",auth:"Jai Narendra Patel — Atrium Health Wake Forest Baptist",sum:"1501"},
+       {n:"Abstract 1516",tja:"地理的格差への対処：IMGの貢献の検討",ten:"Addressing geographic disparities in cancer care: Contributions of IMGs",auth:"Nazli Dizman — UT MD Anderson Cancer Center",sum:"1516"},
+       {n:"Abstract 1520",tja:"乳がん患者のfinancial toxicityに対する財政ナビゲーション介入のRCT（中国）",ten:"Effect of financial navigation intervention on FT in breast cancer: RCT in China",auth:"Weijie Xing — Fudan University School of Nursing, Shanghai",sum:"1520"},
+       {n:"Abstract 1521",tja:"グループ型CHW主導のアドバンスケアプランニング教育RCT",ten:"Effect of group CHW-led ACP education on documentation, hospice use: RCT",auth:"Olivia Viruet Quintero — Stanford University School of Medicine",sum:"1521"},
+     ]},
+    {day:1,t:"4:00–6:00 PM",v:"E450b",st:1,p:"★★",c:"#3DB88A",
+     pill:"Oral Abstract Session",pb:"rgba(61,184,138,.15)",pc:"#3DB88A",
+     tja:"口頭発表：医学教育・専門職能開発",
+     ten:"Oral Abstract Session: Medical Education and Professional Development",
+     auth:"",tags:["Workforce","CRC","Professional Development"],
+     note:"CRC・workforce関連演題含む。",warn:"",
+     subs:[
+       {n:"Abstract 9004",tja:"地域別傾向・経済階層化による2050年腫瘍科人材予測",ten:"Projecting 2050 oncology workforce through historical trends and economic stratification",auth:"Arkadi Asaturyan — Yerevan State Medical University",sum:"9004"},
+       {n:"Abstract 9009",tja:"腫瘍科医師のキャリア充実度と離職意向：グローバル調査",ten:"Career fulfillment and intent to leave among oncology physicians: A global survey",auth:"Coral Olazagasti — University of Miami/Sylvester",sum:"9009"},
+     ]},
+    {day:1,t:"4:30–5:15 PM",v:"E350",st:1,p:"★★",c:"#F0A030",
+     pill:"Award Lecture",pb:"rgba(240,160,48,.15)",pc:"#F0A030",
+     tja:"受賞講演：症状科学をがんアウトカム改善へ翻訳する",
+     ten:"Award: Translating Symptom Science to Improve Cancer Outcomes",
+     auth:"Walther Cancer Foundation受賞 — Ferris / Loprinzi",
+     tags:["PRO","Symptom Science","Patient Experience"],
+     note:"PRO・症状管理の実践。",warn:"3:00 PM Oral Care Deliveryと部分重複"},
+    // DAY 2
+    {day:2,t:"10:30 AM–12:00 PM",v:"S402A",st:0,p:"★★★",c:"#00B4A0",
+     pill:"JCO Central Lounge",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
+     tja:"臨床試験開発：PROの組み込みと患者アドボケートとの協働",
+     ten:"Clinical Trial Development: Incorporating Patient-Reported Outcomes and Working With Patient Advocates",
+     auth:"",tags:["PRO","Patient Advocacy","Trial Design","CRC"],
+     note:"",warn:""},
+    {day:2,t:"1:00–2:30 PM",v:"E350",st:1,p:"★★",c:"#E05050",
+     pill:"Clinical Science Symposium",pb:"rgba(224,80,80,.15)",pc:"#E05050",
+     tja:"CSS：がんケアアクセスの障壁克服グローバル戦略",
+     ten:"CSS: Global Strategies to Overcome Barriers in Cancer Care Access",
+     auth:"",tags:["地域格差","Health Equity","Financial Toxicity"],note:"",warn:""},
+    {day:2,t:"3:00–4:30 PM",v:"E350",st:1,p:"★★★",c:"#00B4A0",
+     pill:"Rapid Oral Abstract Session",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
+     tja:"ラピッドオーラル：クオリティケア・医療サービス研究",
+     ten:"Rapid Oral Abstract Session: Quality Care / Health Services Research",
+     auth:"",tags:["Financial Toxicity","PRO","地域格差","Time Toxicity"],
+     note:"financial toxicity・PRO・地域格差・time toxicityの演題が集中。",warn:""},
+    {day:2,t:"4:30–6:00 PM",v:"E350",st:1,p:"★★★",c:"#00B4A0",
+     pill:"Education Session",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
+     tja:"価値・アクセス・クオリティケア：すべてを両立できるか？",
+     ten:"ED: Value, Access, and Quality Care: Can We Have It All?",
+     auth:"",tags:["Financial Toxicity","Value-Based Care","Patient Centricity"],
+     note:"Rapid Oralから連続参加可能（同会場E350）。",warn:""},
+    {day:2,t:"4:45–6:00 PM",v:"S403",st:0,p:"★★",c:"#F0A030",
+     pill:"JCO GO Session",pb:"rgba(240,160,48,.15)",pc:"#F0A030",
+     tja:"JCO Global Oncology精選：資源制限環境でのがん治療費用負担改善",
+     ten:"The Best of JCO Global Oncology: Improving Affordability in Cancer Care for Resource-Limited Settings",
+     auth:"Dr. Katherine Van Loon（JCO GO Editor-in-Chief）司会",
+     tags:["Financial Toxicity","Global Health","地域格差"],
+     note:"",warn:"ED: Value, Accessと重複 — E350かS403か選択"},
+    // DAY 3
+    {day:3,t:"8:00–11:00 AM",v:"S100bc",st:1,p:"★★★",c:"#00B4A0",
+     pill:"Oral Abstract Session",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
+     tja:"口頭発表：クオリティケア・医療サービス研究",
+     ten:"Oral Abstract Session: Quality Care / Health Services Research",
+     auth:"",tags:["PRO","Financial Toxicity","Health Disparities"],
+     note:"",warn:"",
+     subs:[
+       {n:"Abstract 11004",tja:"PRO-MOTE試験：進行固形腫瘍のePROモニタリングRCT（日本・多施設）",ten:"Multicenter RCT of ePRO monitoring in advanced solid tumors (PRO-MOTE) — Japan",auth:"Naomi Kiyota, MD — Kobe University Hospital",sum:"11004"},
+       {n:"Abstract 11005",tja:"PROを用いたリモート治療モニタリングが転移性固形腫瘍患者の入院に与える影響",ten:"Impact of remote therapeutic monitoring with PROs on hospitalization",auth:"James H. Essell — Cincinnati Cancer Advisors",sum:"11005"},
+       {n:"Abstract 11008",tja:"若年発症大腸がんにおける専任ケアコーディネーターの多次元支援サービスへの影響",ten:"Impact of dedicated care coordination on multidimensional support in young-onset CRC",auth:"Jeongyoon Moon — UT MD Anderson Cancer Center",sum:"11008"},
+     ]},
+    {day:3,t:"9:45–11:15 AM",v:"Hall D1",st:1,p:"★★★",c:"#E8A020",
+     pill:"CSS【確認済み詳細あり】",pb:"rgba(232,160,32,.2)",pc:"#E8A020",
+     tja:"CSS：患者の声を高める — 現代の臨床試験における正しい患者中心エンドポイントの選択",
+     ten:"CSS: Elevating the Patient Voice — Choosing the Right Patient-Centered Endpoints in Modern Clinical Trials",
+     auth:"Chair: Ethan Basch MD（UNC・PRO専門家）/ Gabrielle Rocque MD（UAB）",
+     tags:["PRO","Patient Preference","Patient Advocacy","Clinical Trial Endpoints"],
+     note:"9:45 Basch（PRO指標と規制インパクト）→ 9:57 Kelly Shanahan MD（METAvivor患者代表「患者にとってアウトカムが意味するもの」）→ 10:09 Abstract 103 → 10:21 Abstract 104 → 10:33 Abstract 105（ESOPEC PRO）→ 10:45 Rocque discussant → 10:57 Panel Q&A",
+     warn:"8:00 AMのOral QCから移動可（9:45開始）",
+     subs:[
+       {n:"Abstract 103",tja:"FMISO PETガイド下放射線量大幅減量（HPV関連中咽頭がん）30 ROCアプローチの長期アウトカム",ten:"F-MISO PET-guided major radiation dose de-escalation in HPV+ OPC: Long-term outcomes",auth:"Nancy Y. Lee, MD — Memorial Sloan Kettering Cancer Center",sum:"103"},
+       {n:"Abstract 104",tja:"進行固形腫瘍悪性腹水に対するM701（EpCAM×CD3）腹腔内投与 Phase 3 RCT — 症状負担・QOLエンドポイント",ten:"Phase 3 RCT of M701 intraperitoneal infusion vs paracentesis in malignant ascites",auth:"Jianming Xu, MD — Chinese PLA General Hospital",sum:"104"},
+       {n:"Abstract 105 ★PRO主要副次",tja:"切除可能食道腺がん集学的治療中・後のPRO：第III相ESOPEC試験",ten:"PRO during/after multimodal treatment for resectable esophageal adenocarcinoma: ESOPEC Phase III",auth:"Jens Hoeppner, MD — University of Bielefeld / University Medical Center OWL",sum:"105"},
+     ]},
+    {day:3,t:"4:30–5:45 PM",v:"S102",st:0,p:"★★★",c:"#E8A020",
+     pill:"Education Session【現地のみ・No Live Stream】",pb:"rgba(232,160,32,.2)",pc:"#E8A020",
+     tja:"【現地参加必須】ED：グローバル腫瘍学 — 人材危機：Lancet Oncology委員会報告",
+     ten:"ED: Global Oncology: A Workforce Crisis — A Lancet Oncology Commission",
+     auth:"Chair: David Collingridge（The Lancet Oncology）| CE Credit: 1.25",
+     tags:["Workforce Crisis","Global Health","CRC","Allied Professionals"],
+     note:"4:30 Goal of Commission（Collingridge）→ 4:42 現状と将来予測（Loehrer/Indiana）→ 4:54 人材測定法（Ward/Harvard）→ 5:06 前進への道（Hricak/MSK）→ 5:18 Panel Q&A",
+     warn:"⚠️ No Live Stream — S102現地参加のみ"},
+    // DAY 4
+    {day:4,t:"8:00–9:30 AM",v:"S100a",st:1,p:"★★★",c:"#E05050",
+     pill:"Education Session",pb:"rgba(224,80,80,.15)",pc:"#E05050",
+     tja:"腫瘍臨床試験の活性化時間：課題と改善機会",
+     ten:"ED: Time to Activation in Oncology Clinical Trials — Challenges and Opportunities",
+     auth:"",tags:["CRC","Workforce","Trial Operations","Time Toxicity"],
+     note:"試験立ち上げ時間・CRC業務負担に直結。",warn:""},
+    {day:4,t:"10:00 AM–2:30 PM",v:"S100bc",st:1,p:"★★",c:"#3DB88A",
+     pill:"Oral Abstract Session",pb:"rgba(61,184,138,.15)",pc:"#3DB88A",
+     tja:"口頭発表：症状科学・緩和ケア",
+     ten:"Oral Abstract Session: Symptom Science and Palliative Care",
+     auth:"",tags:["PRO","QOL","Patient Preference","Symptom"],note:"",warn:""},
+    {day:4,t:"11:00 AM–12:30 PM",v:"S100a",st:1,p:"★★",c:"#7B8FD4",
+     pill:"Joint Session",pb:"rgba(123,143,212,.15)",pc:"#7B8FD4",
+     tja:"ASCO/ASPO合同セッション：若年発症がんの来たる波",
+     ten:"ASCO/ASPO Joint Session: The Coming Wave of Early-Onset Cancer",
+     auth:"",tags:["Patient Experience","文化","地域格差","若年がん"],note:"",warn:"Oral Symptom Scienceと重複"},
+    {day:4,t:"3:00–6:00 PM",v:"S100bc",st:1,p:"★★★",c:"#00B4A0",
+     pill:"Oral Abstract Session",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
+     tja:"口頭発表：ケアデリバリー・ケアモデル",
+     ten:"Oral Abstract Session: Care Delivery / Models of Care",
+     auth:"",tags:["Time Toxicity","Financial Toxicity","CRC","Care Delivery"],note:"",warn:""},
+  ],
+  poster:[
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1537 | Poster Bd —",p:"★★★",
+     tags:["Time Toxicity","Financial Toxicity"],
+     tja:"がんケアへの移動時間とケアアクセス・交通苦痛・financial toxicityの関連：Cancer Experience Registry",
+     ten:"Travel time to cancer care, care access, transportation distress, and financial toxicity: Cancer Experience Registry",
+     auth:"Erica Fortune — Cancer Support Community, Washington DC",sum:"1537"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1536 | Poster Bd —",p:"★★",
+     tags:["Financial Toxicity","QOL"],
+     tja:"がん患者のQOL・症状負担の構造的決定因子としての交通アクセス",
+     ten:"Transportation access as a structural determinant of quality of life and symptom burden",
+     auth:"Hailey Ivanson — Keck School of Medicine USC",sum:"1536"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11049 | Poster Bd 32",p:"★★",
+     tags:["Financial Toxicity","CRC","Clinical Trial"],
+     tja:"SWOG S1912CD試験参加者のベースライン財務・信用状況",
+     ten:"Baseline financial and credit status of participants enrolled in SWOG S1912CD",
+     auth:"Veena Shankaran, MD, MS — Fred Hutch Cancer Center",sum:"11049"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11025 | Poster Bd 8",p:"★★",
+     tags:["CRC","Workforce","Trial Operations"],
+     tja:"インフォマティクス主導の同定・リクルート・データキャプチャによる試験負担軽減",
+     ten:"Reducing effort through informatics-driven identification, recruitment, and data capture on a trial",
+     auth:"Ahauve Orusa, MD, MPH — Mayo Clinic Rochester",sum:"11025"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 12032 | Poster Bd —",p:"★★",
+     tags:["地域格差","Palliative Care","Workforce"],
+     tja:"米国の郡レベル緩和ケア医師密度とがん死亡場所の社会経済的決定因子（2021〜2023年）",
+     ten:"County-level palliative care physician density and socioeconomic determinants of place of cancer death",
+     auth:"Ruoxi Teng — Yale University Department of Biostatistics",sum:"12032"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 12073 | Poster Bd —",p:"★★",
+     tags:["地域格差","Palliative Care","Health Disparities"],
+     tja:"入院がん患者の緩和ケア利用全国的傾向：人口・社会経済的格差の7年間分析",
+     ten:"National trends in palliative care use: Seven-year analysis of demographic and socioeconomic disparities",
+     auth:"Aishwarya Ramesh — NY Medical College GME Program",sum:"12073"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1585 | Poster Bd —",p:"★★★",
+     tags:["CRC","Workforce","Patient Centricity"],
+     tja:"早期腫瘍プログラムにおけるCRC主導ケアデリバリーモデル：ワークフロー効率化・患者中心試験実施強化パイロット",
+     ten:"Implementing a CRC-led care delivery model in an early-phase oncology program: Pilot",
+     auth:"Christina Chukri — Cleveland Clinic Taussig Cancer Center",sum:"1585"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1592 | Poster Bd —",p:"★★★",
+     tags:["Patient Experience","Global Health","Patient Centricity"],
+     tja:"がんとその治療における患者体験の代表化（ResPECT）：Lancet委員会グローバル研究",
+     ten:"Representing people's experience of cancer and its treatment (ResPECT): Lancet Commission global study",
+     auth:"André Pfob — Heidelberg University Hospital, Germany",sum:"1592"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11057 | Poster Bd 40",p:"★★★",
+     tags:["Time Toxicity","Patient Distress"],
+     tja:"いつ「時間」が負担になるのか？がんケアに費やす時間と患者の苦痛との関連評価",
+     ten:"When does time become a burden? Evaluating the association between time spent on cancer care and patient distress",
+     auth:"Sarah Boyle, MD — University of Minnesota",sum:"11057"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11061 | Poster Bd 44",p:"★★★",
+     tags:["Patient Advocacy","Patient Centricity","Clinical Trial"],
+     tja:"全国がん試験ネットワーク内での患者パートナーシップ共創：Cancer Trials Ireland×アイルランドがん学会",
+     ten:"Co-creating patient partnership within a national cancer trials network: Cancer Trials Ireland",
+     auth:"Emer Mulvaney — Cancer Trials Ireland, Dublin",sum:"11061"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11092 | Poster Bd 75",p:"★★★",
+     tags:["Patient Preference","CRC","Clinical Trial"],
+     tja:"患者が臨床試験に参加しない理由の調査（教育介入で民主化へ）",
+     ten:"Investigating reasons patients do not join a cancer clinical trial — educational intervention",
+     auth:"Radhi Yagnik — Icahn School of Medicine at Mount Sinai",sum:"11092"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11112 | Poster Bd 95",p:"★★★",
+     tags:["PRO","Patient Advocacy"],
+     tja:"乳がんPROgress Trackerレジストリ：縦断的・患者主導の全国PROレジストリからの疾患不安報告",
+     ten:"PROgress Tracker Breast Cancer Registry: Longitudinal peer-led national PRO registry",
+     auth:"Shaniah Leduc — Breast Cancer Canada",sum:"11112"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 9041 | Poster Bd —",p:"★★★",
+     tags:["CRC","Workforce","APP"],
+     tja:"ハワイNCI地域腫瘍研究プログラムにおけるAPPの役割拡大：5年間の経緯",
+     ten:"Role expansion of advanced practice providers over 5 years at Hawai'i's NCI NCORP",
+     auth:"Christa M. Braun-Inglis — University of Hawai'i Cancer Center",sum:"9041"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1581 | Poster Bd —",p:"★★",
+     tags:["Time Toxicity","Patient Experience"],
+     tja:"注射剤がん治療の現代化：遠隔医療支援の在宅注射モデル（乳がんケア）",
+     ten:"Modernizing injectable cancer care: A telemedicine-supported home injection model for breast cancer",
+     auth:"Erin Mary Bange — Memorial Sloan Kettering Cancer Center",sum:"1581"},
+  ]
+};
+
+var DAY_LBL = {
+  1:"5/29（金）Friday",
+  2:"5/30（土）Saturday",
+  3:"5/31（日）Sunday",
+  4:"6/1（月）Monday"
+};
+
+var activeDay  = "all";
+var activeType = "all";
+var starMode   = false;
+var uid = 0;
+
+function esc(s){
+  if(!s) return "";
+  return String(s)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;");
+}
+
+/* ── Summary HTML ─────────────────────── */
+function sumHtml(key){
+  var s = SUMS[key];
+  if(!s) return "";
+  var h = "";
+  if(s.bg){
+    h += "<div class=\"abs-sec-title\">背景</div>";
+    h += "<div class=\"abs-sec-text\">" + esc(s.bg) + "</div>";
+  }
+  if(s.meth){
+    h += "<div class=\"abs-sec-title\">方法</div>";
+    h += "<div class=\"abs-sec-text\">" + esc(s.meth) + "</div>";
+  }
+  if(s.pnt){
+    h += "<div class=\"abs-sec-title\">なぜ注目すべきか</div>";
+    h += "<div class=\"abs-sec-text\">" + esc(s.pnt) + "</div>";
+  }
+  return h;
+}
+
+/* ── Build SESSION card ───────────────── */
+function buildSession(s){
+  var id    = "s" + (uid++);
+  var prio  = s.p === "★★★" ? "⭐⭐⭐" : s.p === "★★" ? "⭐⭐" : "";
+  var tags  = (s.tags||[]).map(function(t){
+    return "<span class=\"ktag\">" + esc(t) + "</span>";
+  }).join("");
+  var note  = s.note ? "<div class=\"cnote\">" + esc(s.note) + "</div>" : "";
+  var warn  = s.warn ? "<div class=\"cwarn\">⚠ " + esc(s.warn) + "</div>" : "";
+  var stream = s.st
+    ? "<span class=\"sy\">📡 Live Stream</span>"
+    : "<span class=\"sn\">現地のみ</span>";
+
+  /* sub-abstracts */
+  var subsHtml = "";
+  if(s.subs && s.subs.length){
+    subsHtml = s.subs.map(function(sub){
+      var sid = "sa" + (uid++);
+      var sumKey = sub.sum && SUMS[sub.sum] ? sub.sum : null;
+      var sumPart = "";
+      if(sumKey){
+        sumPart =
+          "<button class=\"sa-toggle-btn\" data-target=\"" + sid + "\">📖 日本語要約を見る</button>" +
+          "<div class=\"sa-body\" id=\"" + sid + "\">" +
+            "<div class=\"sa-body-text\">" + sumHtml(sumKey) + "</div>" +
+          "</div>";
+      }
+      return "<div class=\"subabs\">" +
+        "<div class=\"sa-num\">"  + esc(sub.n)    + "</div>" +
+        "<div class=\"sa-ja\">"   + esc(sub.tja)  + "</div>" +
+        "<div class=\"sa-en\">"   + esc(sub.ten)  + "</div>" +
+        "<div class=\"sa-auth\">" + esc(sub.auth) + "</div>" +
+        sumPart +
+      "</div>";
+    }).join("");
+  }
+
+  var timeStr = esc(s.t).replace(/\n/g,"<br>");
+  return "<div class=\"card\">" +
+    "<div class=\"stripe\" style=\"background:" + s.c + "\"></div>" +
+    "<div class=\"cbody\">" +
+      "<div class=\"ctop\">" +
+        "<div class=\"cmeta\">" +
+          "<span class=\"ttag\">" + timeStr + "</span>" +
+          "<div class=\"vtag\">" +
+            "<span class=\"vdot\" style=\"background:" + s.c + "\"></span>" +
+            esc(s.v) + " | " + stream +
+          "</div>" +
+        "</div>" +
+        (prio ? "<div class=\"prio\">" + prio + "</div>" : "") +
+      "</div>" +
+      "<div class=\"pill\" style=\"background:" + s.pb + ";color:" + s.pc + "\">" +
+        esc(s.pill) +
+      "</div>" +
+      "<div class=\"tja\">" + esc(s.tja) + "</div>" +
+      "<div class=\"ten\">" + esc(s.ten) + "</div>" +
+      (s.auth ? "<div class=\"auth\">" + esc(s.auth) + "</div>" : "") +
+      "<div class=\"ktags\">" + tags + "</div>" +
+      note + warn + subsHtml +
+    "</div></div>";
+}
+
+/* ── Build POSTER card ────────────────── */
+function buildPoster(p){
+  var pid    = "p" + (uid++);
+  var prio   = p.p === "★★★" ? "⭐⭐⭐" : "⭐⭐";
+  var tags   = (p.tags||[]).map(function(t){
+    return "<span class=\"ktag\">" + esc(t) + "</span>";
+  }).join("");
+  var hasSumKey = p.sum && SUMS[p.sum];
+  var sumPart = "";
+  if(hasSumKey){
+    sumPart =
+      "<button class=\"abs-toggle\" data-target=\"abs-" + pid + "\">" +
+        "<span class=\"abs-toggle-label\">📖 日本語要約を読む</span>" +
+        "<span class=\"abs-toggle-hint\">(背景・方法・注目ポイント)</span>" +
+        "<span class=\"abs-arr\">▼</span>" +
+      "</button>" +
+      "<div class=\"abs-body\" id=\"abs-" + pid + "\">" +
+        sumHtml(p.sum) +
+      "</div>";
+  }
+  return "<div class=\"pcard\">" +
+    "<div class=\"pcbody\">" +
+      "<div style=\"display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px\">" +
+        "<span class=\"pnum\">" + esc(p.num) + "</span>" +
+        "<span style=\"font-size:13px;\">" + prio + "</span>" +
+      "</div>" +
+      "<div style=\"font-family:var(--mono);font-size:10px;color:var(--mut);margin-bottom:4px;\">" +
+        esc(p.t) + " | " + esc(p.v) +
+      "</div>" +
+      "<div class=\"ptja\">" + esc(p.tja) + "</div>" +
+      "<div class=\"pten\">" + esc(p.ten) + "</div>" +
+      "<div class=\"pauth\">" + esc(p.auth) + "</div>" +
+      "<div class=\"ktags\">" + tags + "</div>" +
+      sumPart +
+    "</div></div>";
+}
+
+/* ── Build MEETING card ───────────────── */
+function buildMeeting(m){
+  var dis  = (m.disease && m.disease !== "—")
+    ? "<span class=\"mcard-dis\">" + esc(m.disease) + "</span><br>" : "";
+  var desc = m.desc
+    ? "<div class=\"mcard-desc\">" + esc(m.desc) + "</div>" : "";
+  var urlPart = m.url
+    ? "<a class=\"mcard-url\" href=\"" + esc(m.url) + "\" target=\"_blank\">🔗 " + esc(m.url) + "</a>" : "";
+  return "<div class=\"mcard\">" +
+    "<div class=\"mcard-top\"></div>" +
+    "<div class=\"mcard-body\">" +
+      "<div class=\"mcard-badge\">👥 面会</div>" +
+      "<div class=\"mcard-time\">" + esc(m.time)   + "</div>" +
+      "<div class=\"mcard-venue\">📍 " + esc(m.venue) + "</div>" +
+      "<div class=\"mcard-org\">"  + esc(m.org)    + "</div>" +
+      dis +
+      "<div class=\"mcard-lead\">担当: " + esc(m.lead) + "</div>" +
+      desc + urlPart +
+    "</div></div>";
+}
+
+/* ── Render ───────────────────────────── */
+function render(){
+  uid = 0;
+  var content = document.getElementById("content");
+  var empty   = document.getElementById("empty");
+  content.innerHTML = "";
+  var lastDay = null;
+  var count   = 0;
+
+  var allItems = [];
+  DATA.session.forEach(function(s){
+    allItems.push({day:s.day, type:"session", item:s});
+  });
+  DATA.poster.forEach(function(p){
+    allItems.push({day:p.day, type:"poster", item:p});
+  });
+  MEETINGS.forEach(function(m){
+    allItems.push({day:m.day, type:"meeting", item:m});
+  });
+  allItems.sort(function(a,b){ return a.day - b.day; });
+
+  allItems.forEach(function(entry){
+    var item = entry.item;
+    var type = entry.type;
+
+    if(activeDay !== "all" && item.day !== parseInt(activeDay,10)) return;
+    if(activeType !== "all" && type !== activeType) return;
+    if(starMode && type !== "meeting" && item.p !== "★★★") return;
+
+    if(item.day !== lastDay){
+      var dl = document.createElement("div");
+      dl.className = "dlbl";
+      dl.textContent = DAY_LBL[item.day] || ("Day " + item.day);
+      content.appendChild(dl);
+      lastDay = item.day;
+    }
+
+    var div = document.createElement("div");
+    if(type === "session")       div.innerHTML = buildSession(item);
+    else if(type === "poster")   div.innerHTML = buildPoster(item);
+    else                         div.innerHTML = buildMeeting(item);
+    content.appendChild(div.firstChild);
+    count++;
+  });
+
+  document.getElementById("cbar").textContent = count + " 件表示中";
+  document.getElementById("cbadge").textContent =
+    (DATA.session.length + DATA.poster.length + MEETINGS.length) + " 件";
+  empty.style.display = count === 0 ? "block" : "none";
+}
+
+/* ── Event: day tabs ──────────────────── */
+document.getElementById("dayTabs").addEventListener("click", function(e){
+  var btn = e.target;
+  while(btn && btn.tagName !== "BUTTON") btn = btn.parentNode;
+  if(!btn || !btn.classList.contains("tab")) return;
+  document.querySelectorAll(".tab").forEach(function(b){b.classList.remove("on");});
+  btn.classList.add("on");
+  activeDay  = btn.getAttribute("data-day");
+  starMode   = false;
+  document.getElementById("btnStar").classList.remove("on");
+  render();
+});
+
+/* ── Event: type filters ──────────────── */
+document.getElementById("frow").addEventListener("click", function(e){
+  var btn = e.target;
+  while(btn && btn.tagName !== "BUTTON") btn = btn.parentNode;
+  if(!btn || !btn.classList.contains("fc")) return;
+  document.querySelectorAll(".fc").forEach(function(b){b.classList.add("dim");});
+  btn.classList.remove("dim");
+  activeType = btn.getAttribute("data-t");
+  starMode   = false;
+  document.getElementById("btnStar").classList.remove("on");
+  render();
+});
+
+/* ── Event: content delegation (abs + sub toggles) ── */
+document.getElementById("content").addEventListener("click", function(e){
+  /* abs-toggle button (poster summary) */
+  var btn = e.target;
+  while(btn && btn !== this){
+    if(btn.tagName === "BUTTON"){
+      /* poster abs-toggle */
+      if(btn.classList.contains("abs-toggle")){
+        var targetId = btn.getAttribute("data-target");
+        var body = document.getElementById(targetId);
+        if(body){
+          var open = body.classList.toggle("open");
+          btn.classList.toggle("open", open);
+          var arr = btn.querySelector(".abs-arr");
+          if(arr) arr.style.transform = open ? "rotate(180deg)" : "";
+        }
+        return;
+      }
+      /* sub-abstract toggle */
+      if(btn.classList.contains("sa-toggle-btn")){
+        var targetId2 = btn.getAttribute("data-target");
+        var body2 = document.getElementById(targetId2);
+        if(body2){
+          var open2 = body2.classList.toggle("open");
+          btn.textContent = open2 ? "📖 要約を閉じる" : "📖 日本語要約を見る";
+        }
+        return;
+      }
+    }
+    btn = btn.parentNode;
+  }
+});
+
+/* ── Event: bottom nav ────────────────── */
+document.getElementById("btnTop").addEventListener("click", function(){
+  window.scrollTo({top:0, behavior:"smooth"});
+});
+document.getElementById("btnStar").addEventListener("click", function(){
+  starMode = !starMode;
+  this.classList.toggle("on", starMode);
+  if(starMode){
+    activeDay  = "all";
+    activeType = "all";
+    document.querySelectorAll(".tab").forEach(function(b,i){
+      b.classList.toggle("on", i === 0);
+    });
+    document.querySelectorAll(".fc").forEach(function(b){
+      b.classList.remove("dim");
+    });
+  }
+  render();
+});
+document.getElementById("btnReset").addEventListener("click", function(){
+  activeDay  = "all";
+  activeType = "all";
+  starMode   = false;
+  document.getElementById("btnStar").classList.remove("on");
+  document.querySelectorAll(".tab").forEach(function(b,i){
+    b.classList.toggle("on", i === 0);
+  });
+  document.querySelectorAll(".fc").forEach(function(b){
+    b.classList.remove("dim");
+  });
+  render();
+});
+
+render();
+</script>
+</body>
+</html>
