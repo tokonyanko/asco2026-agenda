@@ -185,6 +185,19 @@ body{padding-bottom:100px;}
 .nbtn svg{width:20px;height:20px;stroke:currentColor;fill:none;
   stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .empty{text-align:center;padding:60px 20px;color:var(--mut);font-size:16px;}
+/* ── Bookmark / Check feature ── */
+.bm-btn{position:absolute;top:10px;right:12px;background:transparent;border:none;
+  cursor:pointer;font-size:22px;line-height:1;-webkit-appearance:none;
+  padding:4px;min-height:36px;min-width:36px;}
+.bm-btn:active{transform:scale(1.3);}
+.card{position:relative;}
+.pcard{position:relative;}
+.mcard{position:relative;}
+.bm-bar{background:var(--sf2);border-radius:8px;padding:6px 14px;
+  margin:4px 16px 0;font-size:13px;color:var(--gold);
+  display:flex;align-items:center;gap:6px;}
+.fc-bm{background:rgba(232,160,32,.18);color:var(--gold);border-color:#C47A10;}
+
 </style>
 </head>
 <body>
@@ -214,6 +227,7 @@ body{padding-bottom:100px;}
   <button class="fc fc-sess"   data-t="session">セッション</button>
   <button class="fc fc-poster" data-t="poster">ポスター</button>
   <button class="fc fc-meet"   data-t="meeting">👥 面会</button>
+  <button class="fc fc-bm"     data-t="bookmarked">⭐ チェック済み</button>
 </div>
 
 <div class="cbar" id="cbar"></div>
@@ -238,6 +252,24 @@ body{padding-bottom:100px;}
 
 <script>
 "use strict";
+
+/* ── Bookmarks: stored in sessionStorage (survives page reload, not tab close) ── */
+var BOOKMARKS = {};
+try {
+  var stored = sessionStorage.getItem("asco2026_bm");
+  if(stored) BOOKMARKS = JSON.parse(stored);
+} catch(e){}
+
+function saveBM(){
+  try{ sessionStorage.setItem("asco2026_bm", JSON.stringify(BOOKMARKS)); }catch(e){}
+}
+function isBM(id){ return !!BOOKMARKS[id]; }
+function toggleBM(id){
+  if(BOOKMARKS[id]) delete BOOKMARKS[id];
+  else BOOKMARKS[id] = true;
+  saveBM();
+  render();
+}
 var SUMS = {
   "103":{bg:"FMISO PET（機能的低酸素イメージング）で選択したHPV関連中咽頭がん患者に、大幅な放射線量減量を行った場合の長期アウトカムを報告。3つの連続した第II相試験の統合分析（10施設）。T0–3/N1–2c HPV+中咽頭がん患者を対象に、低酸素画像が良好な患者には大幅減量、不良な患者には標準線量を投与。",meth:"機能的低酸素イメージング（FMISO PET）でスクリーニング → 良好群：大幅線量減量 → 不良群：標準線量。主要評価項目：局所コントロール率、毒性、QOL。",pnt:"患者のQOL改善と晩期毒性軽減を目標とした「患者中心」の治療減量研究。エンドポイントの設計がpatient-centeredの典型例。"},
   "104":{bg:"悪性腹水（MA）は進行がん（胃・大腸・卵巣）の重篤な合併症で、症状負担が大きく、全身療法の有効性を低下させ、QOLを著しく損なう。標準治療の腹腔穿刺は一時的な症状緩和のみ。M701（EpCAM×CD3二重特異性抗体）の腹腔内投与と腹腔穿刺を比較するPhase 3 RCT。",meth:"標準療法失敗後の進行胃がん・大腸がん・卵巣がんのMA患者をランダム化。主要評価項目：腹水コントロール率、症状スコア、QOL（EORTC QLQ-C30）、OS。",pnt:"症状負担・QOL・患者体験を主要評価項目とするPhase 3試験。このCSSで取り上げられる理由はpatient-centered endpointsの選択法の具体例として。"},
@@ -264,6 +296,17 @@ var SUMS = {
   "11092":{bg:"がん臨床試験の登録不足は長年の課題。従来の対策は患者の知識・態度・信念・財政的/実際的障壁・不信感に焦点。教育介入で試験へのアクセスを民主化し登録を改善できるか。",meth:"3施設のがんセンターで乳がん・肝がん・肺がん患者の治療決定時点に、コンセント後に臨床試験全般について教育し、試験マッチリストを腫瘍医・患者に提供。時系列介入（INT）として実施。教育前後での登録率・患者の試験理解を比較。",pnt:"患者が試験に参加しない理由の実態とCRCによる教育介入の効果。Patient preference・patient education・trial participation障壁の解決策。"},
   "11112":{bg:"PROgress Trackerは倫理承認済みの非介入PROレジストリで、患者アドボカシー団体Breast Cancer Canada主導のピアツーピアモデル。初期結果として年齢・病期・分子サブタイプ別の疾患不安の性質と強度を報告。",meth:"2023年開始、10年間でカナダのステージ0–IV乳がん患者をエンロール。参加者は自己紹介入し、検証済みPROMs（人口統計・社会経済・臨床・全体的ウェルビーイング）をデジタルプラットフォームで四半期ごとに記録。AIを用いたリアルワールド分析（2026年1月）。",pnt:"患者アドボカシー団体主導のPROレジストリ。患者が中心となったデータ収集・研究の実践モデル。"},
   "12032":{bg:"緩和ケアはEOLアウトカムを改善するが（在宅死亡率向上など）、アクセスは緩和ケア医師の地理的分布格差により不公平。郡レベル緩和ケア医師密度とがん死亡場所の関連を検討。",meth:"CDC WONDER多死因データ（2021–2023）とAMA Physician Masterfile緩和ケア医師供給データを連結。主要曝露：郡レベル緩和ケア医師密度（10万人当たり）。主要評価項目：がん死亡場所（病院vs在宅/ホスピスなど）。社会経済的決定因子（貧困・保険・人種）も調整。",pnt:"Palliative care workforce格差と患者preference（死亡場所選好）の関連を全国データで示す。緩和ケア医師のworkforce分配問題の定量化。"},
+
+  "1508":{bg:"WHOの必須抗がん薬リスト（EML）の薬剤は低所得国では金銭的にアクセスできないことが多い。ネパールをケーススタディとして、WHO EML抗がん薬の入手経路と実際の価格をマッピングし、費用負担能力を定量化。",meth:"ネパールの流通業者・製造業者の価格リスト（2024〜2026年）から患者価格を抽出。標準用法・投与サイクル数を用いてレジメンコストを推計。主要評価項目：年間一人当たりGDPに対するレジメンコストの比率（費用負担能力指標）。",pnt:"低所得国のfinancial toxicity・薬剤アクセス格差の実態を数値化。日本の患者アドボカシー活動の国際的視点として重要。"},
+  "1513":{bg:"多発性骨髄腫（MM）患者は著しいQOL低下・倦怠感・心理的苦痛を抱えているが、アクセスしやすくスケーラブルな支持療法介入は限られている。自己誘導型心理社会的デジタルアプリ（THRIVE-MM）のRCT。",meth:"Massachusetts General Hospital単施設RCT。新規・再発・維持療法中のMM患者を1:1にランダム化（THRIVE-MM群vs通常ケア群）。8週間のアプリアクセス提供。主要評価項目：8週時点のQOL（FACT-MM）。",pnt:"Patient experience・QOL改善・デジタルヘルス介入の患者中心設計の実践例。"},
+  "1514":{bg:"神経膠芽腫のケアは定期外来中心に組織されているが、症状管理・意思決定・介護者の責任は外来以外にも及ぶ。患者向けデジタルツールの外来間での活用を評価。",meth:"Ember Health Inc開発の患者向けデジタルツールの実装研究。外来受診外での症状報告・情報アクセス・意思決定支援の利用パターンを分析。",pnt:"Patient experience・デジタル患者ナビゲーション・外来以外でのケア継続性。"},
+  "1515":{bg:"ペムブロリズマブ単剤は標準3週毎（q3wk）投与が一般的だが、6週毎（q6wk）延長投与も承認されている。遠隔医療訪問を用いて延長投与をサポートし医療受診を減らす実用的試験。",meth:"Memorial Sloan Kettering Cancer Centerでの実用的試験。遠隔医療訪問でq6wkペムブロリズマブ投与をサポートし、急性期ケア受診・患者体験・医療コストを評価。",pnt:"Time toxicity軽減・遠隔医療によるケアデリバリー効率化の実践例。"},
+  "1518":{bg:"遠隔緩和ケア（telepalliative care）のタイミングが進行がん患者の終末期アウトカムに与える影響を多施設後向きコホートで研究。",meth:"Oncoclinicas（ブラジル）多施設後向きコホート。遠隔緩和ケア初回接触の時期（診断からの期間）と終末期ケアアウトカム（ホスピス利用・ICU死亡率・積極的治療）の関連を解析。",pnt:"Patient preference・緩和ケアへのアクセス・遠隔医療の患者アウトカムへの影響。"},
+  "1519":{bg:"入院がん患者は生命を脅かす疾患について話し合うことへの需要が高いが、シリアスイルネスの会話は時間的に困難。LLM（大規模言語モデル）が生成したシリアスイルネス会話サマリーが患者ケアを改善できるか。",meth:"Dana-Farber Cancer Instituteパイロット臨床試験。LLMが電子カルテから自動生成したシリアスイルネス会話サマリーを臨床チームに提供。患者・医療者の満足度・ゴールオブケアの文書化率を評価。",pnt:"Patient interview・goals of care・AIを用いた患者中心コミュニケーション支援。"},
+  "1520":{bg:"乳がん治療のfinancial toxicity（FT）は心理的ウェルビーイング・治療アドヒアランス・QOLに悪影響。財政ナビゲーション（FN）介入のRCTエビデンス。",meth:"アジュバント療法中の成人女性乳がん患者（n=82、41人/群）。FN介入：個別ニーズ評価・費用関連情報・保険/補助金ナビゲーション・地域リソース紹介。主要評価項目：3か月時点のFT（COSTスコア）。",pnt:"Financial toxicityへの財政ナビゲーション介入の高品質RCTエビデンス。中国からの国際データ。"},
+  "1521":{bg:"ACPはすべてのがん患者に推奨されるが、臨床医の時間不足・報酬不十分・workforce不足により参加率が低い。グループ型CHW主導ACP教育介入の効果を検証するRCT。",meth:"1か月のCHW主導グループACP教育介入+通常ケアvs通常ケアのみのRCT。アウトカム：ACP文書化率・患者/家族満足度・緩和ケア紹介・ホスピス入院。",pnt:"人手不足下でのACPスケール化。Patient preference・goals of care・workforce効率的介入モデル。"},
+  "11012":{bg:"遠隔医療はCOVID-19以降急速に普及。がん終末期（EOL）患者にとって特に関連性が高い。遠隔医療利用とEOLケアアウトカムの関連をMedicareデータで検討。",meth:"Medicare TM・MA 100%クレームデータを使用。2020〜2023年に死亡した66歳以上のがん患者。死亡前最終1年間の遠隔医療利用と、EOLケア（ホスピス利用・ICU死亡率・化学療法）の関連を解析。",pnt:"Patient preference・終末期ケアのアクセスと質・遠隔医療の格差解消への貢献。"},
+  "11015":{bg:"早期相臨床試験（EPCT）参加者のQOLと希望の縦断的変化。試験参加がもたらす心理的影響の把握は、patient experienceと試験デザイン改善に重要。",meth:"Massachusetts General HospitalのEPCT参加者を対象に縦断的調査。QOL（FACT-G）・希望（Herth Hope Index）をベースライン・4週・8週・12週に測定。経時的変化と予測因子を解析。",pnt:"Patient experience in clinical trials・patient-reported outcomes・CRC関連（試験参加者のウェルビーイング）。"},
   "12073":{bg:"2016年ASCOガイドラインは進行がん患者への診断から8週以内の専任緩和ケアを推奨。それにもかかわらず、様々な人口統計グループにわたる格差が持続している。",meth:"2016–2022年全国入院サンプル（NIS）からの成人がん入院を分析。緩和ケア（PalC）をICD-10コードで同定。人種/民族・保険種別・所得・病院特性別にPalCの利用パターンと7年間の経時的傾向を分析。",pnt:"緩和ケアへのアクセスにおける人種・保険・所得格差の全国規模での経時的変化。ASCOガイドライン推奨後も格差が持続しているかを検証。"}
 };
 
@@ -331,7 +374,12 @@ var DATA = {
      note:"",warn:"",
      subs:[
        {n:"Abstract 1501",tja:"AIによる治験マッチングのCRC専門家検証（TRIAGE）",ten:"Expert validation of AI-enabled trial matching — CRC adjudication study",auth:"Jai Narendra Patel — Atrium Health Wake Forest Baptist",sum:"1501"},
-       {n:"Abstract 1516",tja:"地理的格差への対処：IMGの貢献の検討",ten:"Addressing geographic disparities in cancer care: Contributions of IMGs",auth:"Nazli Dizman — UT MD Anderson Cancer Center",sum:"1516"},
+       {n:"Abstract 1508",tja:"WHO必須抗がん薬の実際のコスト：低所得設定でのリアルワールド費用",ten:"Essential but unaffordable: Real-world costs of WHO essential cancer medicines in a low-income setting",auth:"Vivek Ghosh — CancerCare Manitoba, Canada",sum:"1508"},
+       {n:"Abstract 1513",tja:"多発性骨髄腫患者向け心理社会的デジタルアプリ（THRIVE-MM）のRCT",ten:"Randomized controlled trial of a psychosocial digital application (THRIVE-MM) for patients living with multiple myeloma",auth:"Areej El-Jawahri — Massachusetts General Hospital / Harvard",sum:"1513"},
+       {n:"Abstract 1515",tja:"テレヘルス訪問でペムブロリズマブ延長投与をサポートし医療受診を削減：実用的試験",ten:"Telehealth visits to support extended dosing of pembrolizumab and reduce health care visits: A pragmatic trial",auth:"Robert Michael Daly — Memorial Sloan Kettering Cancer Center",sum:"1515"},
+       {n:"Abstract 1516",tja:"地理的格差への対処：国際医学部卒業医師（IMG）の貢献の検討",ten:"Addressing geographic disparities in cancer care: Contributions of IMGs",auth:"Nazli Dizman — UT MD Anderson Cancer Center",sum:"1516"},
+       {n:"Abstract 1518",tja:"遠隔緩和ケアのタイミングと進行がんの終末期アウトカム：多施設後向きコホート",ten:"Timing of telepalliative care and end-of-life outcomes in advanced cancer: A multicenter retrospective cohort",auth:"Alexandra Mendes Barreto Arantes — Oncoclinicas & Co, Brazil",sum:"1518"},
+       {n:"Abstract 1519",tja:"LLM生成のシリアスイルネス会話サマリーで入院患者ケアを改善：パイロット臨床試験",ten:"LLM-generated serious illness conversation summaries to improve care for hospitalized patients: A pilot clinical trial",auth:"Christopher Manz — Dana-Farber Cancer Institute",sum:"1519"},
        {n:"Abstract 1520",tja:"乳がん患者のfinancial toxicityに対する財政ナビゲーション介入のRCT（中国）",ten:"Effect of financial navigation intervention on FT in breast cancer: RCT in China",auth:"Weijie Xing — Fudan University School of Nursing, Shanghai",sum:"1520"},
        {n:"Abstract 1521",tja:"グループ型CHW主導のアドバンスケアプランニング教育RCT",ten:"Effect of group CHW-led ACP education on documentation, hospice use: RCT",auth:"Olivia Viruet Quintero — Stanford University School of Medicine",sum:"1521"},
      ]},
@@ -369,7 +417,11 @@ var DATA = {
      tja:"ラピッドオーラル：クオリティケア・医療サービス研究",
      ten:"Rapid Oral Abstract Session: Quality Care / Health Services Research",
      auth:"",tags:["Financial Toxicity","PRO","地域格差","Time Toxicity"],
-     note:"financial toxicity・PRO・地域格差・time toxicityの演題が集中。",warn:""},
+     note:"financial toxicity・PRO・地域格差・time toxicityの演題が集中。",warn:"",
+     subs:[
+       {n:"Abstract 11012",tja:"遠隔医療利用とがん終末期ケアアウトカム：Medicareデータ分析",ten:"Telehealth use and end-of-life care outcomes among Medicare decedents with cancers",auth:"Teresa M. Waters — Augusta University School of Public Health",sum:"11012"},
+       {n:"Abstract 11015",tja:"早期相臨床試験参加者のQOLと希望の縦断的変化",ten:"Longitudinal changes in patient-reported quality of life (QOL) and hope among early phase cancer clinical trial participants",auth:"Debra Lundquist — Massachusetts General Hospital",sum:"11015"},
+     ]},
     {day:2,t:"4:30–6:00 PM",v:"E350",st:1,p:"★★★",c:"#00B4A0",
      pill:"Education Session",pb:"rgba(0,180,160,.2)",pc:"#00B4A0",
      tja:"価値・アクセス・クオリティケア：すべてを両立できるか？",
@@ -557,6 +609,8 @@ function sumHtml(key){
 /* ── Build SESSION card ───────────────── */
 function buildSession(s){
   var id    = "s" + (uid++);
+  var bmId  = "sess_" + (s.tja||s.ten||id).replace(/[^a-z0-9]/gi,"_").substring(0,30);
+  var bmIcon = isBM(bmId) ? "⭐" : "☆";
   var prio  = s.p === "★★★" ? "⭐⭐⭐" : s.p === "★★" ? "⭐⭐" : "";
   var tags  = (s.tags||[]).map(function(t){
     return "<span class=\"ktag\">" + esc(t) + "</span>";
@@ -595,6 +649,7 @@ function buildSession(s){
   return "<div class=\"card\">" +
     "<div class=\"stripe\" style=\"background:" + s.c + "\"></div>" +
     "<div class=\"cbody\">" +
+      "<button class=\"bm-btn\" data-bmid=\"" + bmId + "\">" + bmIcon + "</button>" +
       "<div class=\"ctop\">" +
         "<div class=\"cmeta\">" +
           "<span class=\"ttag\">" + timeStr + "</span>" +
@@ -619,6 +674,8 @@ function buildSession(s){
 /* ── Build POSTER card ────────────────── */
 function buildPoster(p){
   var pid    = "p" + (uid++);
+  var bmId   = "post_" + (p.num||pid).replace(/[^a-z0-9]/gi,"_").substring(0,30);
+  var bmIcon = isBM(bmId) ? "⭐" : "☆";
   var prio   = p.p === "★★★" ? "⭐⭐⭐" : "⭐⭐";
   var tags   = (p.tags||[]).map(function(t){
     return "<span class=\"ktag\">" + esc(t) + "</span>";
@@ -655,6 +712,8 @@ function buildPoster(p){
 
 /* ── Build MEETING card ───────────────── */
 function buildMeeting(m){
+  var bmId   = "meet_" + (m.org||"m").replace(/[^a-z0-9]/gi,"_").substring(0,30);
+  var bmIcon = isBM(bmId) ? "⭐" : "☆";
   var dis  = (m.disease && m.disease !== "—")
     ? "<span class=\"mcard-dis\">" + esc(m.disease) + "</span><br>" : "";
   var desc = m.desc
@@ -700,7 +759,15 @@ function render(){
     var type = entry.type;
 
     if(activeDay !== "all" && item.day !== parseInt(activeDay,10)) return;
-    if(activeType !== "all" && type !== activeType) return;
+    if(activeType !== "all" && activeType !== "bookmarked" && type !== activeType) return;
+    if(activeType === "bookmarked"){
+      /* For bookmarked filter — check if any bmId matches */
+      var bmCheck = false;
+      if(type==="session"){ var bid="sess_"+(item.tja||item.ten||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid)) bmCheck=true; }
+      if(type==="poster"){ var bid2="post_"+(item.num||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid2)) bmCheck=true; }
+      if(type==="meeting"){ var bid3="meet_"+(item.org||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid3)) bmCheck=true; }
+      if(!bmCheck) return;
+    }
     if(starMode && type !== "meeting" && item.p !== "★★★") return;
 
     if(item.day !== lastDay){
@@ -753,13 +820,22 @@ document.getElementById("frow").addEventListener("click", function(e){
 
 /* ── Event: content delegation (abs + sub toggles) ── */
 document.getElementById("content").addEventListener("click", function(e){
-  /* abs-toggle button (poster summary) */
+  /* bm-btn: bookmark toggle */
   var btn = e.target;
   while(btn && btn !== this){
-    if(btn.tagName === "BUTTON"){
+    if(btn.tagName === "BUTTON" && btn.classList.contains("bm-btn")){
+      var bmid = btn.getAttribute("data-bmid");
+      if(bmid){ toggleBM(bmid); return; }
+    }
+    btn = btn.parentNode;
+  }
+  /* abs-toggle button (poster summary) */
+  var btn2 = e.target;
+  while(btn2 && btn2 !== this){
+    if(btn2.tagName === "BUTTON"){
       /* poster abs-toggle */
-      if(btn.classList.contains("abs-toggle")){
-        var targetId = btn.getAttribute("data-target");
+      if(btn2.classList.contains("abs-toggle")){
+        var targetId = btn2.getAttribute("data-target");
         var body = document.getElementById(targetId);
         if(body){
           var open = body.classList.toggle("open");
@@ -770,17 +846,17 @@ document.getElementById("content").addEventListener("click", function(e){
         return;
       }
       /* sub-abstract toggle */
-      if(btn.classList.contains("sa-toggle-btn")){
-        var targetId2 = btn.getAttribute("data-target");
+      if(btn2.classList.contains("sa-toggle-btn")){
+        var targetId2 = btn2.getAttribute("data-target");
         var body2 = document.getElementById(targetId2);
         if(body2){
           var open2 = body2.classList.toggle("open");
-          btn.textContent = open2 ? "📖 要約を閉じる" : "📖 日本語要約を見る";
+          btn2.textContent = open2 ? "📖 要約を閉じる" : "📖 日本語要約を見る";
         }
         return;
       }
     }
-    btn = btn.parentNode;
+    btn2 = btn2.parentNode;
   }
 });
 
