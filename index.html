@@ -186,7 +186,7 @@ body{padding-bottom:100px;}
   stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
 .empty{text-align:center;padding:60px 20px;color:var(--mut);font-size:16px;}
 /* ── Bookmark / Check feature ── */
-.bm-btn{position:absolute;top:10px;right:12px;background:transparent;border:none;
+.bm-btn{position:relative;background:transparent;border:none;
   cursor:pointer;font-size:22px;line-height:1;-webkit-appearance:none;
   padding:4px;min-height:36px;min-width:36px;}
 .bm-btn:active{transform:scale(1.3);}
@@ -456,6 +456,12 @@ var DATA = {
      ten:"ED: Value, Access, and Quality Care: Can We Have It All?",
      auth:"",tags:["Financial Toxicity","Value-Based Care","Patient Centricity"],
      note:"Rapid Oralから連続参加可能（同会場E350）。",warn:""},
+    {day:2,t:"1:30–4:30 PM",v:"Hall A",st:0,p:"",c:"#B4B2A9",
+     pill:"Poster Session（午後）",pb:"rgba(180,178,169,.15)",pc:"#B4B2A9",
+     tja:"ポスターセッション：ケアデリバリー・症状科学（午後）",
+     ten:"Afternoon Poster Session: Care Delivery / Symptom Science / Palliative Care",
+     auth:"",tags:["Poster","5/30 午後"],
+     note:"5/30（土）の午後ポスターセッション（1:30–4:30 PM）。午前の演題に加え追加演題あり。",warn:""},
     {day:2,t:"4:45–6:00 PM",v:"S403",st:0,p:"★★",c:"#F0A030",
      pill:"JCO GO Session",pb:"rgba(240,160,48,.15)",pc:"#F0A030",
      tja:"JCO Global Oncology精選：資源制限環境でのがん治療費用負担改善",
@@ -518,6 +524,12 @@ var DATA = {
      tja:"口頭発表：ケアデリバリー・ケアモデル",
      ten:"Oral Abstract Session: Care Delivery / Models of Care",
      auth:"",tags:["Time Toxicity","Financial Toxicity","CRC","Care Delivery"],note:"",warn:""},
+    {day:4,t:"1:30–4:30 PM",v:"Hall A",st:0,p:"",c:"#B4B2A9",
+     pill:"Poster Session（午後）",pb:"rgba(180,178,169,.15)",pc:"#B4B2A9",
+     tja:"ポスターセッション：全トラック（午後）",
+     ten:"Afternoon Poster Session: All Tracks — Hall A",
+     auth:"",tags:["Poster","6/1 午後"],
+     note:"6/1（月）の午後ポスターセッション（1:30–4:30 PM）。午前とは別の演題も展示。",warn:""},
   ],
   poster:[
     {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1537 | Poster Bd —",p:"★★★",
@@ -530,12 +542,12 @@ var DATA = {
      tja:"がん患者のQOL・症状負担の構造的決定因子としての交通アクセス",
      ten:"Transportation access as a structural determinant of quality of life and symptom burden",
      auth:"Hailey Ivanson — Keck School of Medicine USC",sum:"1536"},
-    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11049 | Poster Bd 32",p:"★★",
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11049 | Poster Bd 32",p:"★★",
      tags:["Financial Toxicity","CRC","Clinical Trial"],
      tja:"SWOG S1912CD試験参加者のベースライン財務・信用状況",
      ten:"Baseline financial and credit status of participants enrolled in SWOG S1912CD",
      auth:"Veena Shankaran, MD, MS — Fred Hutch Cancer Center",sum:"11049"},
-    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11025 | Poster Bd 8",p:"★★",
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11025 | Poster Bd 8",p:"★★",
      tags:["CRC","Workforce","Trial Operations"],
      tja:"インフォマティクス主導の同定・リクルート・データキャプチャによる試験負担軽減",
      ten:"Reducing effort through informatics-driven identification, recruitment, and data capture on a trial",
@@ -560,22 +572,22 @@ var DATA = {
      tja:"がんとその治療における患者体験の代表化（ResPECT）：Lancet委員会グローバル研究",
      ten:"Representing people's experience of cancer and its treatment (ResPECT): Lancet Commission global study",
      auth:"André Pfob — Heidelberg University Hospital, Germany",sum:"1592"},
-    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11057 | Poster Bd 40",p:"★★★",
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11057 | Poster Bd 40",p:"★★★",
      tags:["Time Toxicity","Patient Distress"],
      tja:"いつ「時間」が負担になるのか？がんケアに費やす時間と患者の苦痛との関連評価",
      ten:"When does time become a burden? Evaluating the association between time spent on cancer care and patient distress",
      auth:"Sarah Boyle, MD — University of Minnesota",sum:"11057"},
-    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11061 | Poster Bd 44",p:"★★★",
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11061 | Poster Bd 44",p:"★★★",
      tags:["Patient Advocacy","Patient Centricity","Clinical Trial"],
      tja:"全国がん試験ネットワーク内での患者パートナーシップ共創：Cancer Trials Ireland×アイルランドがん学会",
      ten:"Co-creating patient partnership within a national cancer trials network: Cancer Trials Ireland",
      auth:"Emer Mulvaney — Cancer Trials Ireland, Dublin",sum:"11061"},
-    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11092 | Poster Bd 75",p:"★★★",
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11092 | Poster Bd 75",p:"★★★",
      tags:["Patient Preference","CRC","Clinical Trial"],
      tja:"患者が臨床試験に参加しない理由の調査（教育介入で民主化へ）",
      ten:"Investigating reasons patients do not join a cancer clinical trial — educational intervention",
      auth:"Radhi Yagnik — Icahn School of Medicine at Mount Sinai",sum:"11092"},
-    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11112 | Poster Bd 95",p:"★★★",
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11112 | Poster Bd 95",p:"★★★",
      tags:["PRO","Patient Advocacy"],
      tja:"乳がんPROgress Trackerレジストリ：縦断的・患者主導の全国PROレジストリからの疾患不安報告",
      ten:"PROgress Tracker Breast Cancer Registry: Longitudinal peer-led national PRO registry",
@@ -836,7 +848,6 @@ function buildSession(s){
   return "<div class=\"card\">" +
     "<div class=\"stripe\" style=\"background:" + s.c + "\"></div>" +
     "<div class=\"cbody\">" +
-      "<button class=\"bm-btn\" data-bmid=\"" + bmId + "\">" + bmIcon + "</button>" +
       "<div class=\"ctop\">" +
         "<div class=\"cmeta\">" +
           "<span class=\"ttag\">" + timeStr + "</span>" +
@@ -846,6 +857,7 @@ function buildSession(s){
           "</div>" +
         "</div>" +
         (prio ? "<div class=\"prio\">" + prio + "</div>" : "") +
+        "<button class=\"bm-btn\" style=\"position:static;font-size:20px;\" data-bmid=\"" + bmId + "\">" + bmIcon + "</button>" +
       "</div>" +
       "<div class=\"pill\" style=\"background:" + s.pb + ";color:" + s.pc + "\">" +
         esc(s.pill) +
@@ -915,7 +927,10 @@ function buildMeeting(m){
   return "<div class=\"mcard\">" +
     "<div class=\"mcard-top\"></div>" +
     "<div class=\"mcard-body\">" +
-      "<div class=\"mcard-badge\">👥 面会</div>" +
+      "<div style=\"display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;\">" +
+        "<div class=\"mcard-badge\">👥 面会</div>" +
+        "<button class=\"bm-btn\" style=\"position:static;font-size:20px;\" data-bmid=\"" + bmId + "\">" + bmIcon + "</button>" +
+      "</div>" +
       "<div class=\"mcard-time\">" + esc(m.time)   + "</div>" +
       "<div class=\"mcard-venue\">📍 " + esc(m.venue) + "</div>" +
       "<div class=\"mcard-org\">"  + esc(m.org)    + "</div>" +
