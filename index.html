@@ -17,6 +17,7 @@
   --amb:#F0A030; --pink:#D06090;
   --border:rgba(255,255,255,.08);
   --text:#E8EDF4; --mut:#8099B8; --r:12px; --navy:#0D1B2A;
+  --ds:#C8702A; --ds-bg:rgba(200,112,42,.13); --ds-border:rgba(200,112,42,.35);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{background:var(--bg);color:var(--text);font-family:var(--ff);}
@@ -171,6 +172,32 @@ body{padding-bottom:100px;}
 .mcard-url{font-size:13px;color:var(--teal);
   word-break:break-all;display:block;margin-top:4px;}
 
+/* DS card — 第一三共演題（別色・参考情報扱い） */
+.dscard{background:var(--sf);border-radius:var(--r);
+  border:1px solid var(--ds-border);overflow:hidden;
+  opacity:.85;}
+.dscard:hover{opacity:1;}
+.dscard-top{height:4px;
+  background:linear-gradient(90deg,var(--ds),#A0501A);}
+.dscard-body{padding:12px 14px 14px;}
+.dscard-badge{display:inline-flex;align-items:center;gap:4px;
+  background:var(--ds-bg);color:var(--ds);
+  font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;
+  margin-bottom:6px;border:1px solid var(--ds-border);}
+.dscard-time{font-family:var(--mono);font-size:13px;font-weight:500;
+  color:var(--ds);background:var(--ds-bg);
+  padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:4px;}
+.dscard-tja{font-size:16px;font-weight:700;color:#D4C0A8;
+  line-height:1.5;margin-bottom:3px;}
+.dscard-ten{font-size:12px;color:var(--mut);line-height:1.4;margin-bottom:5px;}
+.dscard-auth{font-size:12px;color:#B89070;margin-bottom:5px;}
+.dscard-num{font-family:var(--mono);font-size:11px;color:var(--ds);
+  background:var(--ds-bg);padding:2px 7px;border-radius:4px;
+  display:inline-block;margin-bottom:6px;}
+.dscard-note{font-size:12px;color:#C8A878;background:rgba(200,112,42,.1);
+  border-left:2px solid var(--ds);padding:5px 9px;
+  border-radius:0 4px 4px 0;margin-top:6px;line-height:1.5;}
+
 /* bottom nav */
 .bnav{position:fixed;bottom:0;left:0;right:0;
   background:rgba(13,27,42,.96);-webkit-backdrop-filter:blur(12px);
@@ -207,7 +234,7 @@ body{padding-bottom:100px;}
     <div>
       <h1>ASCO <em>2026</em> My Agenda</h1>
       <div style="font-size:14px;color:var(--teal);margin-top:2px;font-weight:600;">
-        ver.4 — 抄録要約 + 面会予定</div>
+        ver.5 — 抄録要約 + 面会予定 + 第一三共参考演題</div>
       <div class="hdr-sub">抄録全文（874p）より抽出・日本語要約 | 面会予定含む | All times CDT</div>
     </div>
     <div class="cbadge" id="cbadge">—</div>
@@ -227,6 +254,7 @@ body{padding-bottom:100px;}
   <button class="fc fc-sess"   data-t="session">セッション</button>
   <button class="fc fc-poster" data-t="poster">ポスター</button>
   <button class="fc fc-meet"   data-t="meeting">👥 面会</button>
+  <button class="fc fc-ds"     data-t="ds" style="background:var(--ds-bg);color:var(--ds);border-color:var(--ds-border);">🟠 DS参考</button>
   <button class="fc fc-bm"     data-t="bookmarked">⭐ チェック済み</button>
 </div>
 
@@ -338,7 +366,16 @@ var SUMS = {
   "12073":{bg:"2016年ASCOガイドラインは進行がん患者への診断から8週以内の専任緩和ケアを推奨。それにもかかわらず、様々な人口統計グループにわたる格差が持続している。",meth:"2016–2022年全国入院サンプル（NIS）からの成人がん入院を分析。緩和ケア（PalC）をICD-10コードで同定。人種/民族・保険種別・所得・病院特性別にPalCの利用パターンと7年間の経時的傾向を分析。",pnt:"緩和ケアへのアクセスにおける人種・保険・所得格差の全国規模での経時的変化。ASCOガイドライン推奨後も格差が持続しているかを検証。",res:"2016〜2022年の全国入院サンプル分析。緩和ケア（PalC）利用率の経時的上昇が確認されたが、Black患者・Medicaid患者・低所得患者では利用率が有意に低かった。格差は7年間で縮小せず。",conc:"ASCOガイドライン推奨（2016年）後も緩和ケアへのアクセス格差が持続。人種・保険・所得による格差解消のための的的介入が必要。"}
 ,
   "11080":{bg:"バミューダは2000〜2017年まで放射線治療を国内で提供できず、100%の患者が海外受診を強いられ、著しいfinancial toxicityと治療負担が生じていた。2017年以降の段階的な施設整備と患者支援の成果を報告。",meth:"バミューダCancer and Health Centreでの2000〜現在の経時的データ分析。海外受診率・治療完遂率・患者満足度・費用負担・治療成績を評価。",res:"2017年以降の放射線治療施設整備により国内完結率が大幅向上。患者の渡航費・宿泊費等のfinancial toxicityが大幅軽減。治療成績・患者満足度は国際基準と同等レベルを達成。",conc:"小島嶼国でも計画的投資により世界クラスの公平・効率的ながんケアが実現可能。Financial toxicityの解消と患者centricity向上を同時達成したモデル事例。",pnt:"Patient centricity・health equity・financial toxicity解消の実践モデル。地理的制約を克服したケアデリバリーの革新。"},
-  "11096":{bg:"ブラジルではがんサバイバー数が増加しているが、医療従事者向けのサバイバーシップケア教育へのアクセスが限られている。ASCO Project ECHO Survivorshipプログラムを通じた多職種チームへの教育効果を評価。",meth:"ブラジルのOncoclínicas&Coと多施設の多職種チーム（腫瘍医・看護師・薬剤師・栄養士等）を対象にASCO Project ECHO（バーチャル協働学習）を実施。知識・自信・実践変容を事前・事後調査で評価。",res:"研修前後で知識・自信が有意に向上。参加者の多くが研修後にサバイバーシップケア実践を変容させたと報告。バーチャル形式でブラジル全土の多施設への展開が実現。",conc:"ECHO型バーチャル協働教育はブラジルのような資源制限・地理的分散環境での多職種サバイバーシップ教育のスケーラブルモデル。地域格差解消とworkforce能力構築に寄与。",pnt:"Patient advocacy・workforce development・地域格差解消のための教育モデル。ラテンアメリカのがんケア格差解消への貢献。"}
+  "11096":{bg:"ブラジルではがんサバイバー数が増加しているが、医療従事者向けのサバイバーシップケア教育へのアクセスが限られている。ASCO Project ECHO Survivorshipプログラムを通じた多職種チームへの教育効果を評価。",meth:"ブラジルのOncoclínicas&Coと多施設の多職種チーム（腫瘍医・看護師・薬剤師・栄養士等）を対象にASCO Project ECHO（バーチャル協働学習）を実施。知識・自信・実践変容を事前・事後調査で評価。",res:"研修前後で知識・自信が有意に向上。参加者の多くが研修後にサバイバーシップケア実践を変容させたと報告。バーチャル形式でブラジル全土の多施設への展開が実現。",conc:"ECHO型バーチャル協働教育はブラジルのような資源制限・地理的分散環境での多職種サバイバーシップ教育のスケーラブルモデル。地域格差解消とworkforce能力構築に寄与。",pnt:"Patient advocacy・workforce development・地域格差解消のための教育モデル。ラテンアメリカのがんケア格差解消への貢献。"},
+
+  "4602":{bg:"再発LG-IR-NMIBCへのUGN-102（ゲル状マイトマイシン）とTURBTの患者体験・選好を定量（EORTC-QLQ-NMIBC24）＋定性（半構造化インタビューn=32）で比較。ENVISION試験（NCT05243550）から。",meth:"n=232（米国）。6回週次UGN-102投与後3・12か月でPROを測定。半構造化インタビューでTURBT経験との比較を収集。",res:"EORTC-QLQ-NMIBC24の全ドメインでMCID超えの変化なし（QoL維持）。患者はUGN-102をTURBTより侵襲性・疼痛・時間負担の点で優位と評価。TURBTは「1日で終わる」利点として一部で支持。",conc:"QoL維持＋患者選好データをSDMに活用した製薬企業主導のPatient Experience研究の好事例。定量・定性を組み合わせた設計が参考になる。",pnt:"Patient Experience DataとPatient Preference Dataを同時に収集しSDMに活かすモデル演題。投与法選択のSDM支援データとして実務的に参照可能。"},
+  "1583":{bg:"ASCO Plenary Session試験（2021-2025年）について電子カルテ上の医師-患者会話をClaude 4.5 Sonnet・GPT-4o・Gemini 2.5 Proで解析した大規模LLM研究。8,650名・21試験対象。",meth:"Flatiron Healthデータベース（HIPAA準拠）。LLMがEHRから①会話の文脈②医師センチメント（肯定/中立/否定）③試験治療の実際の開始有無を抽出。多モデルコンセンサスで主題分析。",res:"試験治療の開始率は64%のみ。主な会話テーマ：有効性（78%）・適格性（78%）・患者教育（63%）・毒性（28%）。未開始の主因：バイオマーカー不適格・保険/交通などシステム障壁・患者選好（QoL・生活役割優先）。",conc:"患者選好（QoL・生活役割優先）が試験治療採用を阻む3大因子の1つ。SDM・patient-centered factors の定量化にLLMが有効なことを実証。Patient Centricity活動の根拠データとして最重要演題の一つ。",pnt:"Claude 4.5 Sonnetが実際の医師-患者SDM会話を大規模解析。「QoL・生活役割優先」が治療採用の36%を阻む実態を可視化した画期的研究。"},
+  "12094":{bg:"免疫療法を受ける進行肺がん患者の知識不足・意思決定負担を解消するデジタル教育・SDM支援アプリの開発と評価。4段階混合法（調査n=186・インタビューn=20・アプリ開発・パイロット試験n=69）。",meth:"事前調査で患者の知識不足と希望する情報量とのギャップを特定→ユーザー中心設計でアプリ開発→パイロット（前後比較）。主要アウトカム：意思決定コンフリクト・知識・意思決定準備度。",res:"患者は免疫療法について知識が乏しく不正確であり、希望する情報量と実際の提供量に大きな乖離あり。アプリ介入で意思決定コンフリクト・知識・意思決定準備度・自己効力感が改善。",conc:"患者の知識不足とSDM負担をデジタルツールで解消するPatient Centricity実装例。製薬企業のデジタル患者支援プログラム（PSP）の設計参考モデル。",pnt:"製薬企業が取り組むPatient Support Program（デジタル意思決定支援）の実証研究。免疫療法のSDM支援における患者教育の有効性。"},
+  "1526":{bg:"がん臨床試験参加によるfinancial toxicity（FT）の原因の一つが、患者向け補償情報の不透明さ。英国Christie NHS Foundation Trustで64試験のICF・CTA・スポンサー提供患者資材を後ろ向きレビュー。",meth:"2025年1〜12月開催のEarly Phase試験（n=64）。補償の明示内容・タイムライン・金額・第三者ベンダー利用を評価。スポンサー種別（企業vs学術）での比較も実施。",res:"補償情報がICFに記載：96.8%。具体的な補償活動が明示：23.4%のみ。補償タイムラインを明示したスポンサー：ゼロ。追加費用補償を提供：わずか2.4%。患者向け追加情報を提供：2.4%のみ（1スポンサー）。",conc:"患者向け書類の補償情報が不透明で、試験参加の公平性を阻害。患者との共同開発による補償コミュニケーション改善が進行中（Roche支援）。製薬企業のPatient-Facing Communicationの改善機会として示唆。",pnt:"試験参加のFTと患者向け書類の情報透明性。製薬企業のPatient Centricity・Trial Accessibilityの観点から重要。"},
+  "1540":{bg:"GIがんの試験サイトの地理的アクセシビリティが不十分で、農村・低所得地域に大規模な『試験砂漠（Trial Desert）』が存在する実態をClinicalTrials.govデータで定量化。",meth:"2026年1月時点のClinicalTrials.govから米国で積極募集中のGIがん疾患特異的試験283件・1,322 ZIP codeを解析。30マイル圏内アクセス不能地域をTrial Desertと定義。",res:"全体カバー率83.6%（大腸がん80.2%・膵臓がん75.3%は比較的高いが、胆道がんわずか44.8%・小腸がん43.6%）。農村部の75%以上が希少GIがん試験砂漠に居住。低所得四分位での格差も顕著。",conc:"希少GIがんの試験地理的アクセス格差は深刻で、農村・低所得地域を直撃。分散型試験設計・モバイルユニット・テレスクリーニングなどの地理的包摂策が必要。",pnt:"Trial Desert問題の定量化。製薬企業の試験デザイン（分散型・地理的包摂）とPatient Accessibilityの観点から重要。"},
+  "1565":{bg:"AI×看護師チームによる患者マッチング→試験開始を大幅短縮した実例。Taylor Cancer Research Center（TCRC、オハイオ州、非営利地域腫瘍実践）とTempus AI TIME（Trial Intelligent Matching Engine）プログラムの提携効果を定量報告。",meth:"2024年6月〜2025年8月のTIMEプログラム運用データ。Tempus AIがEHR・NLP・LLMで全患者を毎夜全TIME試験ポートフォリオに対して適格性評価→Tempus看護師がレビュー→TCRCが最終確認→試験をJIT（適格患者発見次第）またはProspective（事前）で開設。",res:"1,195名をプレスクリーニング（約219時間）→278件のポテンシャルマッチ→66件のコンセント（4.1件/試験）。非TIME試験：30件コンセント（3.3件/試験）。TIME試験の平均開始時間：13.7日 vs 非TIME 55.4日（4倍速）。",conc:"AI+看護師によるプレスクリーニングと標準化された試験開設モデル（事前交渉済みCTA・レートカード・中央IRB）が試験開始を4倍速化し、登録数を2倍に。患者の試験アクセス改善と施設負担軽減を同時実現。",pnt:"製薬企業のAI活用Patient Matching・試験登録加速の実装例。CRC業務との連携モデルとして参考に。"},
+  "8536":{bg:"低い試験accrualはoncology最大の障壁の一つ。LLMは非構造化EHRから情報抽出可能だが確率論的出力は適格性判断に不向き。LLM＋ルールベース推論（Neuro-symbolic）＋不確実性認識triage戦略を組み合わせたシステムを開発・実証。",meth:"Llama 3.1-70BでEHRから臨床変数を抽出→試験プロトコルから直接エンコードした決定論的適格基準と照合→triageモジュールが証拠の完全性・論理的一貫性を定量化し「自動化可能」「要医師レビュー」に分類。肺がん＋GUがん患者107名でリアルワールド検証。",res:"マッチング可能患者n=79でTop-1精度100%・Recall@3=1.00。39名（49%）が低不確実性（自動スクリーニング適切）に分類。偽陽性率0.0。中央値処理時間1分未満/患者。",conc:"Neuro-symbolic triage戦略により、自動化の恩恵を最大化しつつ医師の監督が必要な症例を安全に識別。臨床試験マッチングのスケーラブル・透明・信頼可能なソリューション。",pnt:"LLM単体でなく決定論的ルール＋不確実性triageを組み合わせた実用的AIマッチングシステム。精度100%・1分以内判定の実証データが強力。"},
+  "11068":{bg:"農村部がん患者の試験参加率は低いとされるが、実際のSWOG試験データで経時的傾向・農村度別特性を分析した最大規模研究（1992-2022年・69試験・39,729名）。",meth:"患者ZIP codeとRural-Urban Continuum Codes（RUCC）を連結。4段階（大都市・小都市・農村・辺境）に分類。近隣剥奪指数（ADI）・人口統計特性を多変量解析。",res:"大都市52.2%・小都市30.9%・農村11.6%・辺境5.4%（米国全体の人口分布とほぼ同等）。農村・辺境の参加率は人口比に概ね一致。ただし農村患者は近隣剥奪指数（ADI）が有意に高く、社会経済的格差が存在。",conc:"農村部患者のSWOG試験参加率自体は概ね相応だが、社会経済的格差・ADIの差異が持続。参加率の問題より参加した農村患者の特性格差と支援充実が課題。",pnt:"「農村部患者は試験に参加していない」という前提への反証データ。試験砂漠問題とは異なる視点（参加率ではなく参加患者の特性格差）を提供。"}
 };
 
 var MEETINGS = [
@@ -377,6 +414,63 @@ var MEETINGS = [
    disease:"—", lead:"Gunnar",
    desc:"1933年設立、ジュネーブ本部の世界最大・最古のがん制圧国際NGO。170カ国超・1,100超会員組織。World Cancer Day、World Cancer Congress主催。WHOと公式関係を持ち各国がん対策計画策定を支援。",
    url:"https://www.uicc.org/"},
+];
+
+/* ── 第一三共参考演題（オレンジ色・時系列組み込み） ── */
+var DS_ABSTRACTS = [
+  // DAY 2（5/30 土）
+  {day:2, t:"9:00 AM–12:00 PM", v:"Hall A",
+   num:"Abstract 4024",
+   tja:"EPOC2203：T-DXd＋ニボルマブ＋CAPOX（HER2低発現進行胃・食道胃接合部腺がん1次）Phase Ib/II",
+   ten:"Open-label phase Ib/II study of T-DXd + nivolumab + CAPOX in HER2-low gastroesophageal adenocarcinoma (EPOC2203)",
+   auth:"青木裕基（国立がん研究センター東病院）",
+   note:"RP2D 4.4 mg/kg。FAS（n=28）でのORR 89.3%（主要EP超過 p<0.001）。手術転換6名、うちpCR 3名。ILD 10.7%（全Grade 1-2）。治療関連死亡なし。jRCT2031230477 / スポンサー：第一三共"},
+  {day:2, t:"9:00 AM–12:00 PM", v:"Hall A",
+   num:"Abstract 3129",
+   tja:"EPOC2003：術前T-DXd（HER2陽性胃がん）の腫瘍免疫微小環境リモデリング探索解析",
+   ten:"Tumor and immune microenvironment remodeling with neoadjuvant T-DXd in HER2-positive gastric cancer: EPOC2003 exploratory analyses",
+   auth:"川添明彦（国立がん研究センター東病院）",
+   note:"scRNA-seq・多重IHC・ctDNAで解析。全レスポンダー（3/3）がCycle3後にctDNA clearance、非レスポンダーは35.7%のみ。好中球サブタイプ拡大が応答と関連。NCT05034887 / スポンサー：第一三共"},
+  {day:2, t:"9:00 AM–12:00 PM", v:"Hall A",
+   num:"Abstract 1063",
+   tja:"DESTINY-Breast06（DB-06）：T-DXd ILD管理ガイドライン遵守とアウトカムの後ろ向き解析",
+   ten:"Adherence to ILD/pneumonitis toxicity management guidelines and outcomes in T-DXd-treated patients: DB-06 retrospective analysis",
+   auth:"Carla Mateo（AstraZeneca, Barcelona）",
+   note:"完全遵守率73.5%。完全遵守群のILD回復率66.7%、非遵守群は50%が未回復（うち1名死亡）。ILD管理遵守の重要性を実証。NCT04494425 / スポンサー：第一三共・AZ"},
+  // DAY 3（5/31 日）
+  {day:3, t:"9:00 AM–12:00 PM", v:"Hall A",
+   num:"Abstract 5570",
+   tja:"REJOICE-Ovarian01：R-DXd（raludotatug deruxtecan）白金抵抗性卵巣がんPhase 2 用量選択E-R解析",
+   ten:"Exposure-response analyses of efficacy and safety with raludotatug deruxtecan (R-DXd) to inform dose selection for phase 3 development in platinum-resistant ovarian cancer",
+   auth:"Felipe K. Hurtado（Daiichi Sankyo, Inc.）",
+   note:"Phase 2 ORR：4.8 mg/kg 44.4%、5.6 mg/kg 50.0%、6.4 mg/kg 57.1%。E-R解析から5.6 mg/kgをPhase 3推奨用量に決定（Project Optimusガイドライン準拠）。NCT06161025 / スポンサー：第一三共・MSD"},
+  {day:3, t:"9:00 AM–12:00 PM", v:"Hall A",
+   num:"Abstract 5571",
+   tja:"REJOICE-Ovarian01：R-DXd母集団薬物動態解析（白金抵抗性卵巣がん・RCC）",
+   ten:"Population pharmacokinetic analysis of raludotatug deruxtecan (R-DXd) in patients with advanced ovarian cancer or renal cell carcinoma",
+   auth:"Felipe K. Hurtado（Daiichi Sankyo, Inc.）",
+   note:"体重がR-DXd/DXd曝露に影響（高BW群でAUC最大66%増）。ただし用量調整不要。5.6 mg/kg Q3Wが全患者群で適切と結論。NCT06161025 / スポンサー：第一三共・MSD"},
+  // DAY 3（5/31 日）CSS
+  {day:3, t:"9:45–11:15 AM", v:"Hall D1",
+   num:"Abstract 1012",
+   tja:"DESTINY-Breast07 Final Analysis：T-DXd＋デュルバルマブ（1次HER2+転移乳がん）",
+   ten:"T-DXd + durvalumab in previously untreated HER2+ unresectable/metastatic breast cancer: Final analysis from DESTINY-Breast07",
+   auth:"Sherene Loi（Peter MacCallum Cancer Centre, Melbourne）",
+   note:"1次HER2+転移乳がんへのT-DXd+デュルバルマブの用量拡大コホート最終報告。CSS「患者の声を高める」セッション内で発表。NCT04538742 / スポンサー：第一三共・AZ"},
+  // DAY 4（6/1 月）
+  {day:4, t:"9:00 AM–12:00 PM", v:"Hall A",
+   num:"Abstract 4111",
+   tja:"DG-04追加HRQoL解析：T-DXd vs RAM+PTX（HER2+胃・食道胃接合部腺がん2次）",
+   ten:"Additional HRQoL analysis from DESTINY-Gastric04 (DG-04): T-DXd vs ramucirumab + paclitaxel in HER2+ unresectable/metastatic gastric cancer",
+   auth:"Kohei Shitara（国立がん研究センター東病院）",
+   note:"TTFD：EQ-5D-5L VAS（3.5 vs 3.0ヶ月）・FACT-G総スコア（3.5 vs 2.8ヶ月）・EWB・SWBすべてT-DXd優位。全FACT-Gaサブスケールで平均CFBは安定（臨床的に意味のある悪化なし）。NCT04704934 / スポンサー：第一三共"},
+  // MYTHOS試験（身内試験・DSスポンサー）
+  {day:4, t:"8:36–8:48 AM", v:"E450b",
+   num:"Abstract 6011",
+   tja:"MYTHOS試験 Phase II：HER2低発現再発・転移性唾液腺がんに対するT-DXd（木下一郎ファースト・北海道大）",
+   ten:"Trastuzumab deruxtecan in patients with HER2-low recurrent/metastatic salivary gland carcinoma: Results from the phase II MYTHOS trial",
+   auth:"Ichiro Kinoshita, MD, PhD — Dept. of Medical Oncology, Hokkaido University Hospital, Sapporo（jRCT2011210017）",
+   note:"CSS「Small Glands, Big Challenges: Novel Therapeutics in Salivary Gland Cancer」（Head and Neck Cancer トラック）での発表。8:00–9:30 AM、E450b、⚠️ No Live Stream（現地参加のみ）。HER2低発現コホート（Cohort 2、n=36、うちSDC 30例）。ORR 38.9%（主要EP未達）だがSDCサブグループでは46.7%。DCR 94.4%。PFS中央値8.7ヶ月・OS中央値24.8ヶ月。ILD/pneumonitis 25%（Grade 5が1例：死亡）。スポンサー：第一三共"},
 ];
 
 var DATA = {
@@ -764,6 +858,64 @@ var DATA = {
      ten:"Text-based electronic patient-reported outcome monitoring in oncology: A 180-day longitudinal analysis of symptom burden changes in 701 cancer patients",
      auth:"Pallav K. Mehta — Reimagine Care, Nashville, TN",
      sum:"11113"},
+
+    // ── カテゴリ1：Patient Experience / Preference / SDM ──
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 4602 | Poster Bd —",p:"★★★",
+     tags:["Patient Experience","Patient Preference","SDM","PRO"],
+     tja:"UGN-102（ゲル状マイトマイシン）の患者体験：再発LG-IR-NMIBCにおけるSDMへの示唆",
+     ten:"Patient experiences with UGN-102 for recurrent LG-IR-NMIBC: Insights for shared decision making",
+     auth:"Ruchika Talwar — Vanderbilt University Medical Center, Nashville, TN",
+     sum:"4602"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1583 | Poster Bd —",p:"★★★",
+     tags:["Patient Preference","SDM","AI/LLM","Patient Centricity","Clinical Trial"],
+     tja:"LLMによるASCO Plenary試験SDM会話の大規模主題分析：患者選好がなぜ試験採用を阻むか",
+     ten:"From plenary to practice: A LLM-based thematic analysis of landmark clinical trial discussions and factors influencing real-world adoption",
+     auth:"Aaron B. Cohen — Flatiron Health, New York, NY",
+     sum:"1583"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 12094 | Poster Bd —",p:"★★",
+     tags:["Patient Preference","SDM","Digital Health","Patient Centricity","Lung Cancer"],
+     tja:"進行肺がん免疫療法患者向けデジタル教育・意思決定支援介入：多相混合法研究",
+     ten:"A digital educational and decision-support intervention for patients with advanced lung cancer receiving immunotherapy",
+     auth:"Matthias Villalobos — Thoraxklinik Heidelberg University Hospital, Germany",
+     sum:"12094"},
+
+    // ── カテゴリ2：臨床試験情報アクセス・患者マッチング・リーチ ──
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1526 | Poster Bd —",p:"★★★",
+     tags:["Clinical Trial","Financial Toxicity","Patient Centricity","Trial Access"],
+     tja:"早期相がん臨床試験のFinancial Toxicity：スポンサー提供患者向け補償情報のレビュー",
+     ten:"Financial toxicity in early-phase cancer clinical trials: A review of sponsor-supplied patient-facing information",
+     auth:"Akul Purohit — The Christie NHS Foundation Trust, Manchester, UK",
+     sum:"1526"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1540 | Poster Bd —",p:"★★★",
+     tags:["Clinical Trial","地域格差","Trial Access","Trial Desert"],
+     tja:"米国GIがん試験の地理的アクセシビリティ：希少がんの農村部75%以上がTrial Desertに居住",
+     ten:"Geographic accessibility of recruiting clinical trials for rare and common gastrointestinal malignancies in the United States",
+     auth:"Rahul Kumar Thakur — Roswell Park Comprehensive Cancer Center, Buffalo, NY",
+     sum:"1540"},
+    {day:3,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 11068 | Poster Bd —",p:"★★",
+     tags:["Clinical Trial","地域格差","Trial Access","Rural","SWOG"],
+     tja:"SWOG試験における農村患者の参加推移（1992-2022年）：農村部の参加率は人口比相応だが社会経済的格差が継続",
+     ten:"Prevalence and trends in rural patient enrollment in SWOG cancer clinical trials, 1992-2022",
+     auth:"Izumi Okado — University of Hawai'i Cancer Center, Honolulu, HI",
+     sum:"11068"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 1565 | Poster Bd —",p:"★★★",
+     tags:["Clinical Trial","AI/LLM","Trial Matching","CRC","Patient Centricity"],
+     tja:"Tempus AI TIMEパートナーシップによる試験開始の4倍速化・登録2倍化：地域腫瘍実践でのAI患者マッチング実装",
+     ten:"Impact of the TCRC and Tempus AI TIME Partnership on clinical trial start-up and accrual",
+     auth:"John Nemunaitis — Taylor Family Research Foundation, Maumee, OH",
+     sum:"1565"},
+    {day:4,v:"Hall A",t:"9:00 AM–12:00 PM",num:"Abstract 8536 | Poster Bd —",p:"★★★",
+     tags:["Clinical Trial","AI/LLM","Trial Matching","CRC"],
+     tja:"腫瘍学における試験マッチングのためのTriage-aware Neuro-symbolic AI：肺がん・GUがんでのリアルワールド検証（精度100%・処理1分未満）",
+     ten:"A triage-aware neuro-symbolic approach for clinical trial matching in oncology: Real-world validation in lung and GU cancer",
+     auth:"Vittoria Peppoloni — Fondazione IRCSS Istituto Nazionale dei Tumori di Milano, Italy",
+     sum:"8536"},
+    {day:2,v:"Hall A",t:"9:00 AM–12:00 PM",num:"TPS1676 | Poster Bd —",p:"★★",
+     tags:["Clinical Trial","地域格差","Trial Access","Rural","Patient Education"],
+     tja:"CTNow：農村部の腫瘍医・患者向け多層的臨床試験教育・紹介調整介入（ハワイ農村部、NCT06237816）",
+     ten:"CTNow pilot study: A multilevel clinical trial education and referral coordination intervention for rural oncology providers and patients",
+     auth:"Izumi Okado — University of Hawai'i Cancer Center, Honolulu, HI",
+     sum:"1675"},
   ]
 };
 
@@ -773,6 +925,13 @@ var DAY_LBL = {
   3:"5/31（日）Sunday",
   4:"6/1（月）Monday"
 };
+var DAY_SHORT = {
+  1:"5/29(金)",
+  2:"5/30(土)",
+  3:"5/31(日)",
+  4:"6/1(月)"
+};
+function dayShort(day){ return DAY_SHORT[day] || ""; }
 
 var activeDay  = "all";
 var activeType = "all";
@@ -855,12 +1014,16 @@ function buildSession(s){
   }
 
   var timeStr = esc(s.t).replace(/\n/g,"<br>");
+  var dayTag  = "<span style=\"font-family:var(--mono);font-size:11px;font-weight:700;"
+              + "background:rgba(255,255,255,.07);color:#A0C4E0;"
+              + "padding:1px 6px;border-radius:4px;margin-right:5px;\">"
+              + dayShort(s.day) + "</span>";
   return "<div class=\"card\">" +
     "<div class=\"stripe\" style=\"background:" + s.c + "\"></div>" +
     "<div class=\"cbody\">" +
       "<div class=\"ctop\">" +
         "<div class=\"cmeta\">" +
-          "<span class=\"ttag\">" + timeStr + "</span>" +
+          "<span class=\"ttag\">" + dayTag + timeStr + "</span>" +
           "<div class=\"vtag\">" +
             "<span class=\"vdot\" style=\"background:" + s.c + "\"></span>" +
             esc(s.v) + " | " + stream +
@@ -912,6 +1075,7 @@ function buildPoster(p){
       "</div>" +
       "</div>" +
       "<div style=\"font-family:var(--mono);font-size:10px;color:var(--mut);margin-bottom:4px;\">" +
+        "<span style=\"font-weight:700;color:#A0C4E0;margin-right:4px;\">" + dayShort(p.day) + "</span>" +
         esc(p.t) + " | " + esc(p.v) +
       "</div>" +
       "<div class=\"ptja\">" + esc(p.tja) + "</div>" +
@@ -919,6 +1083,29 @@ function buildPoster(p){
       "<div class=\"pauth\">" + esc(p.auth) + "</div>" +
       "<div class=\"ktags\">" + tags + "</div>" +
       sumPart +
+    "</div></div>";
+}
+
+/* ── Build DS card ────────────────────── */
+function buildDS(d){
+  var did  = "d" + (uid++);
+  var bmId = "ds_" + (d.num||did).replace(/[^a-z0-9]/gi,"_").substring(0,30);
+  var bmIcon = isBM(bmId) ? "⭐" : "☆";
+  return "<div class=\"dscard\">" +
+    "<div class=\"dscard-top\"></div>" +
+    "<div class=\"dscard-body\">" +
+      "<div style=\"display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;\">" +
+        "<div>" +
+          "<div class=\"dscard-badge\">🟠 第一三共 参考演題</div>" +
+          "<div class=\"dscard-time\">📅 <span style=\"font-weight:700;color:#E8C090;margin-right:3px;\">" + dayShort(d.day) + "</span>" + esc(d.t) + " | " + esc(d.v) + "</div>" +
+        "</div>" +
+        "<button class=\"bm-btn\" style=\"position:static;font-size:20px;\" data-bmid=\"" + bmId + "\">" + bmIcon + "</button>" +
+      "</div>" +
+      "<div class=\"dscard-num\">" + esc(d.num) + "</div>" +
+      "<div class=\"dscard-tja\">" + esc(d.tja) + "</div>" +
+      "<div class=\"dscard-ten\">" + esc(d.ten) + "</div>" +
+      "<div class=\"dscard-auth\">" + esc(d.auth) + "</div>" +
+      (d.note ? "<div class=\"dscard-note\">" + esc(d.note) + "</div>" : "") +
     "</div></div>";
 }
 
@@ -941,7 +1128,7 @@ function buildMeeting(m){
         "<div class=\"mcard-badge\">👥 面会</div>" +
         "<button class=\"bm-btn\" style=\"position:static;font-size:20px;\" data-bmid=\"" + bmId + "\">" + bmIcon + "</button>" +
       "</div>" +
-      "<div class=\"mcard-time\">" + esc(m.time)   + "</div>" +
+      "<div class=\"mcard-time\"><span style=\"font-size:11px;font-weight:700;color:#E8C0D8;margin-right:4px;\">" + dayShort(m.day) + "</span>" + esc(m.time) + "</div>" +
       "<div class=\"mcard-venue\">📍 " + esc(m.venue) + "</div>" +
       "<div class=\"mcard-org\">"  + esc(m.org)    + "</div>" +
       dis +
@@ -968,6 +1155,9 @@ function render(){
   });
   MEETINGS.forEach(function(m){
     allItems.push({day:m.day, type:"meeting", item:m});
+  });
+  DS_ABSTRACTS.forEach(function(d){
+    allItems.push({day:d.day, type:"ds", item:d});
   });
   allItems.sort(function(a,b){
     if(a.day !== b.day) return a.day - b.day;
@@ -998,9 +1188,10 @@ function render(){
       if(type==="session"){ var bid="sess_"+(item.tja||item.ten||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid)) bmCheck=true; }
       if(type==="poster"){ var bid2="post_"+(item.num||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid2)) bmCheck=true; }
       if(type==="meeting"){ var bid3="meet_"+(item.org||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid3)) bmCheck=true; }
+      if(type==="ds"){ var bid4="ds_"+(item.num||"").replace(/[^a-z0-9]/gi,"_").substring(0,30); if(isBM(bid4)) bmCheck=true; }
       if(!bmCheck) return;
     }
-    if(starMode && type !== "meeting" && item.p !== "★★★") return;
+    if(starMode && type !== "meeting" && type !== "ds" && item.p !== "★★★") return;
 
     if(item.day !== lastDay){
       var dl = document.createElement("div");
@@ -1013,6 +1204,7 @@ function render(){
     var div = document.createElement("div");
     if(type === "session")       div.innerHTML = buildSession(item);
     else if(type === "poster")   div.innerHTML = buildPoster(item);
+    else if(type === "ds")       div.innerHTML = buildDS(item);
     else                         div.innerHTML = buildMeeting(item);
     content.appendChild(div.firstChild);
     count++;
@@ -1020,7 +1212,7 @@ function render(){
 
   document.getElementById("cbar").textContent = count + " 件表示中";
   document.getElementById("cbadge").textContent =
-    (DATA.session.length + DATA.poster.length + MEETINGS.length) + " 件";
+    (DATA.session.length + DATA.poster.length + MEETINGS.length + DS_ABSTRACTS.length) + " 件";
   empty.style.display = count === 0 ? "block" : "none";
 }
 
